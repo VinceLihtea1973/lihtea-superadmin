@@ -276,8 +276,8 @@ function Login({onLogin}){const[e,sE]=useState("");const[p,sP]=useState("");cons
     else if(r.access_token){
       _tok=r.access_token;
       // Vérification rôle super_admin
-      const ur=await fjA(ADM+"/users?auth_id=eq."+r.user.id).catch(()=>null);
-      const role=ur?.data?.[0]?.role;
+      const ur=await fetch(SU+"/rest/v1/users?auth_id=eq."+r.user.id+"&select=role",{headers:{apikey:AK,"Authorization":"Bearer "+r.access_token}}).then(x=>x.json()).catch(()=>null);
+      const role=ur?.[0]?.role;
       if(role!=="super_admin"){sErr("Accès refusé — espace réservé à Lihtea");_tok=null;sL(false);return}
       au.set({access_token:r.access_token,user:r.user});onLogin(r);
     }
