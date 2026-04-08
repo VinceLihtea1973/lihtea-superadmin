@@ -106,7 +106,7 @@ function DashboardSaaS({onNavigate}){
   const alerts=[];
   if(inactive30>0) alerts.push({icon:"💤",message:`${inactive30} client(s) inactif(s) depuis plus de 30 jours`});
   if(atRisk>0) alerts.push({icon:"⚠️",message:`${atRisk} client(s) à risque de churn`});
-  const noAdmin=tenants.filter(t=>t.actif&&!users.some(u=>u.tenant_id===t.id&&u.role==="admin")).length;
+  const noAdmin=tenants.filter(t=>t.actif&&!users.some(u=>u.tenant_id===t.id&&(u.role==="admin"||u.role==="super_admin"))).length;
   if(noAdmin>0) alerts.push({icon:"👤",message:`${noAdmin} client(s) sans administrateur configuré`});
 
   const planDist=[["Enterprise",C.gold],["Pro",C.blue],["Starter",C.teal]].map(([p,c])=>({p:p.toLowerCase(),label:p,color:c,count:tenants.filter(t=>t.plan===p.toLowerCase()).length}));
@@ -604,7 +604,9 @@ function Alertes({tenants,users}){
   const withScores=useMemo(()=>tenants.map(t=>{
     const tu=users.filter(u=>u.tenant_id===t.id);
     const score=computeHealthScore(t,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));
-    return{...t,score,tuCount:tu.length,hasAdmin:tu.some(u=>u.role==="admin"),days:daysAgo(t.updated_at||t.created_at)};
+    // hasAdmin : role "admin" OU "super_admin" comptent comme administrateur valide
+    const hasAdmin=tu.some(u=>u.role==="admin"||u.role==="super_admin");
+    return{...t,score,tuCount:tu.length,hasAdmin,days:daysAgo(t.updated_at||t.created_at)};
   }),[tenants,users]);
 
   const alerts=[
@@ -813,12 +815,17 @@ function Layout({user,onLogout}){
   const[page,sP]=useState("dashboard");const[sb,sSb]=useState(true);
   const[tenants,sTenants]=useState([]);const[users,sUsers]=useState([]);
   const[selectedTenant,setSelectedTenant]=useState(null);
+  const[refreshing,setRefreshing]=useState(false);
+  const[lastRefresh,setLastRefresh]=useState(null);
 
-  // Load global data once for sharing between views
-  useEffect(()=>{
-    Promise.all([fjA(ADM+"/tenants"),fjA(ADM+"/user-stats")])
-    .then(([t,u])=>{sTenants(t?.data||[]);sUsers(u?.data||[])});
-  },[]);
+  // Chargement (et rechargement) des données globales
+  const loadData=async()=>{
+    setRefreshing(true);
+    const[t,u]=await Promise.all([fjA(ADM+"/tenants"),fjA(ADM+"/user-stats")]);
+    sTenants(t?.data||[]);sUsers(u?.data||[]);
+    setLastRefresh(new Date());setRefreshing(false);
+  };
+  useEffect(()=>{loadData()},[]);
 
   const navigate=(pageId,arg)=>{
     if(pageId==="tenants"&&arg&&typeof arg==="object"){setSelectedTenant(arg);sP("tenants");}
@@ -830,7 +837,7 @@ function Layout({user,onLogout}){
 
   // Alert count for badge
   const alertCount=useMemo(()=>{
-    const ws=tenants.map(t=>{const tu=users.filter(u=>u.tenant_id===t.id);const score=computeHealthScore(t,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));return{...t,score,days:daysAgo(t.updated_at||t.created_at),hasAdmin:tu.some(u=>u.role==="admin")};});
+    const ws=tenants.map(t=>{const tu=users.filter(u=>u.tenant_id===t.id);const score=computeHealthScore(t,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));const hasAdmin=tu.some(u=>u.role==="admin"||u.role==="super_admin");return{...t,score,days:daysAgo(t.updated_at||t.created_at),hasAdmin};});
     return ws.filter(t=>t.actif&&(t.days>30||t.score<40||!t.hasAdmin)).length;
   },[tenants,users]);
 
@@ -886,6 +893,16 @@ function Layout({user,onLogout}){
         </span>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
           {alertCount>0&&<span style={{background:C.red+"15",color:C.red,borderRadius:10,padding:"2px 10px",fontSize:11,fontWeight:700}}>🔔 {alertCount} alerte{alertCount>1?"s":""}</span>}
+          {/* Bouton Actualiser + horodatage */}
+          <button
+            onClick={loadData}
+            disabled={refreshing}
+            title={lastRefresh?"Dernière actualisation : "+lastRefresh.toLocaleTimeString("fr-FR"):"Actualiser les données"}
+            style={{padding:"4px 10px",borderRadius:8,border:"1px solid "+C.border,background:refreshing?C.bg:C.surface,color:refreshing?C.text3:C.teal,fontSize:11,fontWeight:700,cursor:refreshing?"wait":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:5,transition:"all 0.2s"}}>
+            <span style={{display:"inline-block",animation:refreshing?"spin 1s linear infinite":"none",fontSize:12}}>🔄</span>
+            {refreshing?"Actualisation…":"Actualiser"}
+          </button>
+          {lastRefresh&&<span style={{fontSize:10,color:C.text3,whiteSpace:"nowrap"}}>màj {lastRefresh.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</span>}
           <Badge color={C.gold}>Super Admin</Badge>
           <Badge color={C.navy}>Lihtea Platform</Badge>
         </div>
@@ -898,6 +915,8 @@ function Layout({user,onLogout}){
 // ─── APP ──────────────────────────────────────────────────────────────────────
 export default function App(){
   const[s,sS]=useState(null);const[chk,sChk]=useState(true);
+  // Animation spin pour le bouton refresh
+  if(typeof document!=="undefined"&&!document.getElementById("sa-spin-style")){const st=document.createElement("style");st.id="sa-spin-style";st.textContent="@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}";document.head.appendChild(st);}
   useEffect(()=>{
     const sv=au.get();
     if(sv?.access_token){_tok=sv.access_token;au.getUser(sv.access_token).then(u=>{if(u?.id)sS({...sv,user:u});else{au.clear();_tok=null;}sChk(false)}).catch(()=>{au.clear();_tok=null;sChk(false)});}
