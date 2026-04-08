@@ -187,15 +187,37 @@ function DashboardSaaS({onNavigate}){
 }
 
 // ─── TENANT DETAIL ────────────────────────────────────────────────────────────
-function TenantDetail({tenant,onBack,allUsers}){
+function TenantDetail({tenant,onBack,allUsers,onRefresh}){
   const[tab,setTab]=useState("overview");
   const[auditLogs,sAL]=useState([]);const[loadingLogs,sLL]=useState(false);
+  const[localPlan,setLocalPlan]=useState(tenant.plan||"starter");
+  const[planModal,setPlanModal]=useState(null); // {newPlan, label}
+  const[saving,setSaving]=useState(false);
   const tu=allUsers.filter(u=>u.tenant_id===tenant.id);
   const score=computeHealthScore(tenant,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));
   const{l:hl,c:hc}=healthLabel(score);
   const simTotal=tu.reduce((s,u)=>s+u.total_simulations,0);
-  const mrr=PLAN_PRICE[tenant.plan]||149;
+  const mrr=PLAN_PRICE[localPlan]||149;
   const{toastMsg,toastErr,toast}=useToast();
+
+  const PLANS=["starter","pro","enterprise"];
+  const planIdx=PLANS.indexOf(localPlan);
+  const canUpgrade=planIdx<PLANS.length-1;
+  const canDowngrade=planIdx>0;
+
+  const changePlan=async(newPlan)=>{
+    setSaving(true);
+    const r=await fjA(ADM+"/tenants/"+tenant.id,{method:"PATCH",body:JSON.stringify({plan:newPlan})});
+    if(r?.updated||r?.data||r?.ok||!r?.error){
+      setLocalPlan(newPlan);
+      toast("Plan changé vers "+newPlan+" ✓");
+      if(onRefresh) onRefresh();
+    } else {
+      toast("Erreur : "+(r?.error||r?.message||"Impossible de changer le plan"),true);
+    }
+    setSaving(false);
+    setPlanModal(null);
+  };
 
   useEffect(()=>{
     if(tab==="logs"){
@@ -216,6 +238,12 @@ function TenantDetail({tenant,onBack,allUsers}){
 
   return<div>
     <Toast msg={toastMsg} error={toastErr}/>
+    <ConfirmModal open={!!planModal} onClose={()=>setPlanModal(null)} onConfirm={()=>planModal&&changePlan(planModal.newPlan)}
+      title={planModal?.title||"Changer de plan"}
+      message={planModal?.message||""}
+      icon={planModal?.icon||"💳"}
+      confirmLabel={saving?"En cours...":planModal?.confirmLabel||"Confirmer"}
+      confirmColor={planModal?.confirmColor||C.teal}/>
     {/* Header tenant */}
     <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
       <button onClick={onBack} style={{padding:"8px 12px",borderRadius:8,border:"1px solid "+C.border,background:C.surface,cursor:"pointer",fontSize:12,fontFamily:"inherit",color:C.text2}}>← Retour</button>
@@ -224,7 +252,7 @@ function TenantDetail({tenant,onBack,allUsers}){
         <div style={{fontSize:18,fontWeight:800,color:C.navy}}>{tenant.nom}</div>
         <div style={{fontSize:11,color:C.text3,fontFamily:"monospace"}}>{tenant.slug} · créé le {fd(tenant.created_at)}</div>
       </div>
-      <Badge color={PLAN_COLOR[tenant.plan]||C.text3}>{tenant.plan||"starter"}</Badge>
+      <Badge color={PLAN_COLOR[localPlan]||C.text3}>{localPlan}</Badge>
       <Badge color={tenant.actif?C.green:C.red} dot>{tenant.actif?"Actif":"Inactif"}</Badge>
       <Badge color={hc} dot>{hl} · {score}/100</Badge>
     </div>
@@ -315,21 +343,21 @@ function TenantDetail({tenant,onBack,allUsers}){
         <Card style={{borderColor:C.gold+"40",background:C.gold+"05"}}>
           <div style={{fontSize:11,color:C.text3,textTransform:"uppercase",marginBottom:8}}>Plan actuel</div>
           <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:12}}>
-            <span style={{fontSize:32,fontWeight:900,color:C.gold}}>{PLAN_PRICE[tenant.plan]||149} €</span>
+            <span style={{fontSize:32,fontWeight:900,color:C.gold}}>{PLAN_PRICE[localPlan]||149} €</span>
             <span style={{color:C.text3,fontSize:13}}>/mois</span>
           </div>
-          <Badge color={PLAN_COLOR[tenant.plan]||C.text3}>{tenant.plan||"starter"}</Badge>
+          <Badge color={PLAN_COLOR[localPlan]||C.text3}>{localPlan}</Badge>
           <div style={{display:"flex",gap:8,marginTop:12}}>
-            <Btn small color={C.teal} icon="⬆️">Upgrade</Btn>
-            <Btn small variant="outline" color={C.text3} icon="⬇️">Downgrade</Btn>
+            <Btn small color={C.teal} icon="⬆️" disabled={!canUpgrade||saving} onClick={()=>{const np=PLANS[planIdx+1];setPlanModal({newPlan:np,title:"Upgrade vers "+np,message:`Passer "${tenant.nom}" du plan ${localPlan} au plan ${np} (${PLAN_PRICE[np]}€/mois) ?`,icon:"⬆️",confirmLabel:"Upgrade",confirmColor:C.teal})}}>Upgrade</Btn>
+            <Btn small variant="outline" color={C.red} icon="⬇️" disabled={!canDowngrade||saving} onClick={()=>{const np=PLANS[planIdx-1];setPlanModal({newPlan:np,title:"Downgrade vers "+np,message:`Passer "${tenant.nom}" du plan ${localPlan} au plan ${np} (${PLAN_PRICE[np]}€/mois) ?`,icon:"⬇️",confirmLabel:"Downgrade",confirmColor:C.orange})}}>Downgrade</Btn>
           </div>
         </Card>
         <Card>
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>Quotas</div>
           {[
-            {l:"Utilisateurs",used:tu.length,max:tenant.plan==="enterprise"?50:tenant.plan==="pro"?15:5},
-            {l:"Simulations/mois",used:simTotal,max:tenant.plan==="enterprise"?1000:tenant.plan==="pro"?200:50},
-            {l:"Exports PDF/mois",used:0,max:tenant.plan==="enterprise"?500:tenant.plan==="pro"?100:20},
+            {l:"Utilisateurs",used:tu.length,max:localPlan==="enterprise"?50:localPlan==="pro"?15:5},
+            {l:"Simulations/mois",used:simTotal,max:localPlan==="enterprise"?1000:localPlan==="pro"?200:50},
+            {l:"Exports PDF/mois",used:0,max:localPlan==="enterprise"?500:localPlan==="pro"?100:20},
           ].map(({l,used,max})=>{const pct=Math.min(100,Math.round(used/max*100));return<div key={l} style={{marginBottom:10}}>
             <div style={{display:"flex",justifyContent:"space-between",fontSize:12,marginBottom:3}}>
               <span style={{color:C.text2}}>{l}</span><span style={{color:pct>80?C.red:C.text3}}>{used}/{max}</span>
@@ -361,7 +389,7 @@ function TenantDetail({tenant,onBack,allUsers}){
         </Card>
         <Card>
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>Modules activés</div>
-          {[{l:"Simulateur Green Finance",on:true},{l:"Catalogue CEE",on:true},{l:"Export PDF",on:tenant.plan!=="starter"},{l:"Multi-utilisateurs",on:tenant.plan!=="starter"},{l:"API access",on:tenant.plan==="enterprise"},{l:"SSO SAML",on:tenant.plan==="enterprise"}].map(({l,on})=><div key={l} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid "+C.border+"60",fontSize:13}}>
+          {[{l:"Simulateur Green Finance",on:true},{l:"Catalogue CEE",on:true},{l:"Export PDF",on:localPlan!=="starter"},{l:"Multi-utilisateurs",on:localPlan!=="starter"},{l:"API access",on:localPlan==="enterprise"},{l:"SSO SAML",on:localPlan==="enterprise"}].map(({l,on})=><div key={l} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid "+C.border+"60",fontSize:13}}>
             <span style={{color:on?C.text:C.text3}}>{l}</span>
             <span>{on?"✅":"🔒"}</span>
           </div>)}
@@ -842,7 +870,7 @@ function Layout({user,onLogout}){
   },[tenants,users]);
 
   const PG=()=>{
-    if(selectedTenant&&page==="tenants") return<TenantDetail tenant={selectedTenant} allUsers={users} onBack={()=>setSelectedTenant(null)}/>;
+    if(selectedTenant&&page==="tenants") return<TenantDetail tenant={selectedTenant} allUsers={users} onBack={()=>setSelectedTenant(null)} onRefresh={loadData}/>;
     switch(page){
       case "dashboard": return<DashboardSaaS onNavigate={navigate}/>;
       case "tenants":   return<Tenants allUsers={users} onSelectTenant={t=>{setSelectedTenant(t);}} initialAction={null}/>;
