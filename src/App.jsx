@@ -418,7 +418,7 @@ function TenantDetail({tenant,onBack,allUsers,onRefresh}){
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>🎭 Impersonation</div>
           <p style={{fontSize:13,color:C.text2,marginBottom:12}}>Accédez au compte client en mode lecture pour diagnostiquer un problème. Toutes les actions sont loggées.</p>
           <div style={{padding:10,borderRadius:8,background:C.red+"08",border:"1px solid "+C.red+"20",fontSize:12,color:C.red,marginBottom:12}}>⚠️ L'impersonation est tracée et auditée.</div>
-          <Btn color={C.purple} icon="🎭" onClick={()=>{window.open("https://simulateur-gef.vercel.app?t="+tenant.slug+"&_sa_impersonate=1","_blank");toast("Session d'impersonation ouverte — loggée")}}>
+          <Btn color={C.purple} icon="🎭" onClick={async()=>{await fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${tenant.nom} (${tenant.slug})`,tenant_id:tenant.id})});window.open("https://simulateur-gef.vercel.app?t="+tenant.slug+"&_sa_impersonate=1","_blank");toast("Session d'impersonation ouverte — tracée ✓")}}>
             Accéder en tant que {tenant.nom}
           </Btn>
         </Card>
@@ -515,7 +515,7 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
       {key:"created_at",label:"Client depuis",render:v=><span style={{fontSize:11,color:C.text3}}>{fd(v)}</span>},
       {key:"id",label:"Actions",render:(v,r)=><div style={{display:"flex",gap:4,flexWrap:"wrap"}} onClick={e=>e.stopPropagation()}>
         <Btn small variant="outline" color={C.blue} onClick={()=>onSelectTenant(r)}>🔍 Détail</Btn>
-        <Btn small variant="outline" color={C.purple} onClick={()=>{window.open("https://simulateur-gef.vercel.app?t="+r.slug+"&_sa_impersonate=1","_blank")}}>🎭</Btn>
+        <Btn small variant="outline" color={C.purple} onClick={async()=>{await fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${r.nom} (${r.slug})`,tenant_id:r.id})});window.open("https://simulateur-gef.vercel.app?t="+r.slug+"&_sa_impersonate=1","_blank")}}>🎭</Btn>
         <Btn small variant="outline" color={r.actif?C.red:C.green} onClick={()=>sConf(r)}>{r.actif?"⏸":"▶"}</Btn>
       </div>},
     ]}/>}
@@ -847,12 +847,14 @@ function Layout({user,onLogout}){
   const[selectedTenant,setSelectedTenant]=useState(null);
   const[refreshing,setRefreshing]=useState(false);
   const[lastRefresh,setLastRefresh]=useState(null);
+  const[refreshKey,setRefreshKey]=useState(0);
 
   // Chargement (et rechargement) des données globales
   const loadData=async()=>{
     setRefreshing(true);
     const[t,u]=await Promise.all([fjA(ADM+"/tenants"),fjA(ADM+"/user-stats")]);
     sTenants(t?.data||[]);sUsers(u?.data||[]);
+    setRefreshKey(k=>k+1); // force re-mount DashboardSaaS pour rafraîchir crm-stats
     setLastRefresh(new Date());setRefreshing(false);
   };
   useEffect(()=>{loadData()},[]);
@@ -874,7 +876,7 @@ function Layout({user,onLogout}){
   const PG=()=>{
     if(selectedTenant&&page==="tenants") return<TenantDetail tenant={selectedTenant} allUsers={users} onBack={()=>setSelectedTenant(null)} onRefresh={loadData}/>;
     switch(page){
-      case "dashboard": return<DashboardSaaS onNavigate={navigate}/>;
+      case "dashboard": return<DashboardSaaS key={refreshKey} onNavigate={navigate}/>;
       case "tenants":   return<Tenants allUsers={users} onSelectTenant={t=>{setSelectedTenant(t);}} initialAction={null}/>;
       case "analytics": return<Analytics tenants={tenants} users={users}/>;
       case "alertes":   return<Alertes tenants={tenants} users={users}/>;
