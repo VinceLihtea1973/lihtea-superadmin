@@ -461,9 +461,11 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
     if(!f.nom||!f.slug||!f.email||!f.password){toast("Tous les champs* sont requis",true);return}
     sCr(true);
     const slug=f.slug.toLowerCase().replace(/[^a-z0-9-]/g,"-");
-    const r=await fetch(`${SU}/functions/v1/create-tenant`,{method:"POST",headers:{"Content-Type":"application/json","apikey":AK,"Authorization":"Bearer "+AK},body:JSON.stringify({nom:f.nom,slug,email:f.email,password:f.password,plan:f.plan||"starter",email_support:f.email_support||f.email,brand_config:{name:f.nom,colors:{navy:"#0f2b46",teal:"#0d9488",gold:"#d4a843"}}})}).then(r=>r.json()).catch(()=>null);
-    if(r?.tenant_id||r?.access_token){toast(`✓ Client "${f.nom}" créé avec succès`);sM(null);refresh();}
-    else toast("❌ "+(r?.error||r?.message||"Erreur lors de la création"),true);
+    // Utilise fjA() → Bearer JWT du super_admin (pas l'anon key)
+    // L'edge function create-tenant valide le rôle et utilise sa propre service role key
+    const r=await fjA(`${SU}/functions/v1/create-tenant`,{method:"POST",body:JSON.stringify({nom:f.nom,slug,email:f.email,password:f.password,plan:f.plan||"starter",email_support:f.email_support||f.email,brand_config:{name:f.nom,colors:{navy:"#0f2b46",teal:"#0d9488",gold:"#d4a843"}}})});
+    if(r?.tenant_id||r?.success||r?.data?.id){toast(`Client "${f.nom}" créé avec succès`);sM(null);refresh();}
+    else toast(r?.error||r?.message||"Erreur lors de la création — vérifiez les logs edge function",true);
     sCr(false);
   };
 
