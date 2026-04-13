@@ -441,7 +441,7 @@ function TenantDetail({tenant,onBack,allUsers,onRefresh}){
           <Btn color={C.purple} icon="🎭" onClick={()=>{
             if(!tenant.slug){toast("Slug manquant pour ce client",true);return;}
             // window.open AVANT tout await — sinon le navigateur bloque le popup
-            window.open("https://lihtea.com?t="+tenant.slug+"&_sa_impersonate=1","_blank");
+            window.open("https://simulateur-gef.vercel.app?t="+tenant.slug+"&_sa_impersonate=1","_blank");
             fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${tenant.nom} (${tenant.slug})`,tenant_id:tenant.id})});
             toast("Session d'impersonation ouverte — tracée ✓");
           }}>
@@ -451,7 +451,7 @@ function TenantDetail({tenant,onBack,allUsers,onRefresh}){
         <Card>
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>🔗 Liens rapides</div>
           {[
-            {l:"Simulateur client",url:"https://lihtea.com?t="+tenant.slug,icon:"🌐"},
+            {l:"Simulateur client",url:"https://simulateur-gef.vercel.app?t="+tenant.slug,icon:"🌐"},
             {l:"Admin client",url:"https://admin.lihtea.com?t="+tenant.slug,icon:"⚙️"},
           ].map(({l,url,icon})=><a key={l} href={url} target="_blank" rel="noopener" style={{display:"flex",alignItems:"center",gap:10,padding:"9px 12px",marginBottom:6,borderRadius:8,border:"1px solid "+C.border,background:C.bg,textDecoration:"none",color:C.text,fontSize:12,fontWeight:600}}>
             <span>{icon}</span>{l}<span style={{marginLeft:"auto",color:C.text3}}>↗</span>
@@ -541,7 +541,7 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
       {key:"created_at",label:"Client depuis",render:v=><span style={{fontSize:11,color:C.text3}}>{fd(v)}</span>},
       {key:"id",label:"Actions",render:(v,r)=><div style={{display:"flex",gap:4,flexWrap:"wrap"}} onClick={e=>e.stopPropagation()}>
         <Btn small variant="outline" color={C.blue} onClick={()=>onSelectTenant(r)}>🔍 Détail</Btn>
-        <Btn small variant="outline" color={C.purple} onClick={()=>{if(!r.slug)return;window.open("https://lihtea.com?t="+r.slug+"&_sa_impersonate=1","_blank");fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${r.nom} (${r.slug})`,tenant_id:r.id})});}}>🎭</Btn>
+        <Btn small variant="outline" color={C.purple} onClick={()=>{if(!r.slug)return;window.open("https://simulateur-gef.vercel.app?t="+r.slug+"&_sa_impersonate=1","_blank");fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${r.nom} (${r.slug})`,tenant_id:r.id})});}}>🎭</Btn>
         <Btn small variant="outline" color={r.actif?C.red:C.green} onClick={()=>sConf(r)}>{r.actif?"⏸":"▶"}</Btn>
       </div>},
     ]}/>}
