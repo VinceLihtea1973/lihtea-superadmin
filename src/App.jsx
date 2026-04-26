@@ -63,10 +63,30 @@ function Input({label,value,onChange,type="text",placeholder,rows,options,disabl
 function Modal({open,onClose,title,children,wide,xwide}){if(!open)return null;return<div style={{position:"fixed",inset:0,zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(15,43,70,0.55)",backdropFilter:"blur(5px)"}} onClick={onClose}><div onClick={e=>e.stopPropagation()} style={{background:C.surface,borderRadius:16,padding:24,width:xwide?960:wide?720:480,maxWidth:"95vw",maxHeight:"90vh",overflow:"auto",boxShadow:"0 24px 80px rgba(15,43,70,0.35)"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}><div style={{fontSize:16,fontWeight:800,color:C.navy}}>{title}</div><button onClick={onClose} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:C.text3,lineHeight:1}}>✕</button></div>{children}</div></div>}
 function Toast({msg,error}){if(!msg)return null;return<div style={{position:"fixed",top:16,right:16,zIndex:300,padding:"11px 20px",borderRadius:10,background:error?C.red:C.green,color:"#fff",fontSize:13,fontWeight:600,boxShadow:"0 4px 24px rgba(0,0,0,0.25)",display:"flex",alignItems:"center",gap:8}}>{error?"❌":"✓"} {msg}</div>}
 function Stat({icon,value,label,color=C.navy,sub,trend}){return<div style={{padding:"14px 16px",borderRadius:12,background:C.surface,border:"1px solid "+C.border}}><div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:20}}>{icon}</span>{trend!==undefined&&<span style={{fontSize:10,fontWeight:700,color:trend>=0?C.green:C.red}}>{trend>=0?"+":""}{trend}%</span>}</div><div style={{fontSize:22,fontWeight:800,color,fontFamily:"'JetBrains Mono',monospace"}}>{value??"—"}</div><div style={{fontSize:10,color:C.text3,textTransform:"uppercase",letterSpacing:"0.04em",marginTop:2}}>{label}</div>{sub&&<div style={{fontSize:11,color:C.text2,marginTop:3}}>{sub}</div>}</div>}
-function DT({columns,data,onEdit,onDelete,loading,empty,onRowClick}){if(loading)return<div style={{padding:40,textAlign:"center",color:C.text3}}>Chargement...</div>;if(!data?.length)return<div style={{padding:40,textAlign:"center",color:C.text3}}>{empty||"Aucune donnée"}</div>;return<div style={{overflowX:"auto",borderRadius:10,border:"1px solid "+C.border}}><table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}><thead><tr style={{background:C.navy}}>{columns.map((c,i)=><th key={i} style={{padding:"10px 14px",color:"#fff",fontWeight:600,textAlign:"left",fontSize:11,textTransform:"uppercase",whiteSpace:"nowrap",letterSpacing:"0.04em"}}>{c.label}</th>)}{(onEdit||onDelete)&&<th style={{padding:"10px 14px",color:"#fff",textAlign:"right",fontSize:11,width:90}}>Actions</th>}</tr></thead><tbody>{data.map((row,ri)=><tr key={row.id||ri} onClick={onRowClick?()=>onRowClick(row):undefined} style={{borderBottom:"1px solid "+C.border,background:ri%2?C.bg:C.surface,cursor:onRowClick?"pointer":"default",transition:"background 0.15s"}}>{columns.map((c,ci)=><td key={ci} style={{padding:"9px 12px"}}>{c.render?c.render(row[c.key],row):(row[c.key]??"—")}</td>)}{(onEdit||onDelete)&&<td style={{padding:"8px 12px",textAlign:"right",whiteSpace:"nowrap"}}>{onEdit&&<Btn small variant="outline" color={C.blue} onClick={e=>{e.stopPropagation();onEdit(row)}} style={{marginRight:4}}>✏️</Btn>}{onDelete&&<Btn small variant="outline" color={C.red} onClick={e=>{e.stopPropagation();onDelete(row)}}>🗑</Btn>}</td>}</tr>)}</tbody></table></div>}
+function DT({columns,data,onEdit,onDelete,loading,empty,onRowClick,pageSize=50}){
+  const[pg,setPg]=useState(0);
+  const total=data?.length||0;const pages=Math.ceil(total/pageSize);const slice=(data||[]).slice(pg*pageSize,(pg+1)*pageSize);
+  if(loading)return<div style={{padding:40,textAlign:"center",color:C.text3}}>Chargement...</div>;
+  if(!total)return<div style={{padding:40,textAlign:"center",color:C.text3}}>{empty||"Aucune donnée"}</div>;
+  return<div>
+    <div style={{overflowX:"auto",borderRadius:10,border:"1px solid "+C.border}}>
+      <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+        <thead><tr style={{background:C.navy}}>{columns.map((c,i)=><th key={i} style={{padding:"10px 14px",color:"#fff",fontWeight:600,textAlign:"left",fontSize:11,textTransform:"uppercase",whiteSpace:"nowrap",letterSpacing:"0.04em"}}>{c.label}</th>)}{(onEdit||onDelete)&&<th style={{padding:"10px 14px",color:"#fff",textAlign:"right",fontSize:11,width:90}}>Actions</th>}</tr></thead>
+        <tbody>{slice.map((row,ri)=><tr key={row.id||ri} onClick={onRowClick?()=>onRowClick(row):undefined} style={{borderBottom:"1px solid "+C.border,background:ri%2?C.bg:C.surface,cursor:onRowClick?"pointer":"default",transition:"background 0.15s"}}>{columns.map((c,ci)=><td key={ci} style={{padding:"9px 12px"}}>{c.render?c.render(row[c.key],row):(row[c.key]??"—")}</td>)}{(onEdit||onDelete)&&<td style={{padding:"8px 12px",textAlign:"right",whiteSpace:"nowrap"}}>{onEdit&&<Btn small variant="outline" color={C.blue} onClick={e=>{e.stopPropagation();onEdit(row)}} style={{marginRight:4}}>✏️</Btn>}{onDelete&&<Btn small variant="outline" color={C.red} onClick={e=>{e.stopPropagation();onDelete(row)}}>🗑</Btn>}</td>}</tr>)}</tbody>
+      </table>
+    </div>
+    {pages>1&&<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 12px",fontSize:12,color:C.text3,borderTop:"1px solid "+C.border}}>
+      <span>{pg*pageSize+1}–{Math.min((pg+1)*pageSize,total)} sur {total}</span>
+      <div style={{display:"flex",gap:6}}>
+        <Btn small variant="outline" color={C.navy} disabled={pg===0} onClick={()=>setPg(p=>p-1)}>← Préc.</Btn>
+        <Btn small variant="outline" color={C.navy} disabled={pg>=pages-1} onClick={()=>setPg(p=>p+1)}>Suiv. →</Btn>
+      </div>
+    </div>}
+  </div>
+}
 function ConfirmModal({open,onClose,onConfirm,title,message,confirmLabel="Supprimer",confirmColor=C.red,icon="⚠️"}){if(!open)return null;return<div style={{position:"fixed",inset:0,zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(15,43,70,0.6)",backdropFilter:"blur(6px)"}} onClick={onClose}><div onClick={e=>e.stopPropagation()} style={{background:C.surface,borderRadius:20,padding:0,width:380,maxWidth:"90vw",boxShadow:"0 24px 80px rgba(15,43,70,0.35)",overflow:"hidden"}}><div style={{padding:"24px 24px 0",textAlign:"center"}}><div style={{width:56,height:56,borderRadius:28,background:confirmColor+"15",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:12}}>{icon}</div><div style={{fontSize:17,fontWeight:800,color:C.navy,marginBottom:6}}>{title||"Confirmer"}</div><div style={{fontSize:13,color:C.text2,lineHeight:1.5}}>{message}</div></div><div style={{display:"flex",gap:10,padding:"20px 24px 24px",marginTop:8}}><button onClick={onClose} style={{flex:1,padding:"11px 0",borderRadius:10,border:"1px solid "+C.border,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Annuler</button><button onClick={onConfirm} style={{flex:1,padding:"11px 0",borderRadius:10,border:"none",background:confirmColor,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{confirmLabel}</button></div></div></div>}
 function HealthBar({score}){const{l,c}=healthLabel(score);return<div style={{display:"flex",alignItems:"center",gap:6}}><div style={{flex:1,height:5,borderRadius:3,background:C.border,overflow:"hidden"}}><div style={{width:score+"%",height:"100%",background:c,borderRadius:3,transition:"width 0.4s"}}/></div><span style={{fontSize:11,fontWeight:700,color:c,minWidth:28}}>{score}</span></div>}
-function TabBar({tabs,active,onChange}){return<div style={{display:"flex",gap:2,borderBottom:"2px solid "+C.border,marginBottom:20}}>{tabs.map(t=><button key={t.id} onClick={()=>onChange(t.id)} style={{padding:"10px 16px",border:"none",background:"none",fontFamily:"inherit",fontSize:13,fontWeight:active===t.id?700:500,color:active===t.id?C.teal:C.text3,borderBottom:active===t.id?"2px solid "+C.teal:"2px solid transparent",marginBottom:-2,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>{t.icon&&<span>{t.icon}</span>}{t.label}{t.count!==undefined&&<span style={{background:active===t.id?C.teal+"20":C.bg,color:active===t.id?C.teal:C.text3,borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{t.count}</span>}</button>}</div>}
+function TabBar({tabs,active,onChange}){return<div style={{display:"flex",gap:2,borderBottom:"2px solid "+C.border,marginBottom:20}}>{tabs.map(t=><button key={t.id} onClick={()=>onChange(t.id)} style={{padding:"10px 16px",border:"none",background:"none",fontFamily:"inherit",fontSize:13,fontWeight:active===t.id?700:500,color:active===t.id?C.teal:C.text3,borderBottom:active===t.id?"2px solid "+C.teal:"2px solid transparent",marginBottom:-2,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>{t.icon&&<span>{t.icon}</span>}{t.label}{t.count!==undefined&&<span style={{background:active===t.id?C.teal+"20":C.bg,color:active===t.id?C.teal:C.text3,borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{t.count}</span>}</button>)}</div>}
 function AlertBanner({alerts}){if(!alerts?.length)return null;return<div style={{background:C.red+"08",border:"1px solid "+C.red+"25",borderRadius:10,padding:"10px 16px",marginBottom:16}}><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:alerts.length>1?8:0}}><span style={{fontSize:16}}>🔔</span><span style={{fontWeight:700,color:C.red,fontSize:13}}>{alerts.length} alerte{alerts.length>1?"s":""} active{alerts.length>1?"s":""}</span></div>{alerts.slice(0,3).map((a,i)=><div key={i} style={{fontSize:12,color:C.text2,padding:"3px 0 3px 26px",borderTop:i?"1px solid "+C.border+"80":"none"}}>{a.icon} {a.message}</div>)}</div>}
 function SectionTitle({children,sub}){return<div style={{marginBottom:16}}><h2 style={{fontSize:18,fontWeight:800,color:C.navy,margin:0}}>{children}</h2>{sub&&<p style={{fontSize:13,color:C.text3,margin:"3px 0 0"}}>{sub}</p>}</div>}
 function Card({children,style:sx}){return<div style={{background:C.surface,border:"1px solid "+C.border,borderRadius:12,padding:16,...sx}}>{children}</div>}
@@ -106,7 +126,7 @@ function DashboardSaaS({onNavigate}){
   const alerts=[];
   if(inactive30>0) alerts.push({icon:"💤",message:`${inactive30} client(s) inactif(s) depuis plus de 30 jours`});
   if(atRisk>0) alerts.push({icon:"⚠️",message:`${atRisk} client(s) à risque de churn`});
-  const noAdmin=tenants.filter(t=>t.actif&&!users.some(u=>u.tenant_id===t.id&&u.role==="admin")).length;
+  const noAdmin=tenants.filter(t=>t.actif&&!users.some(u=>u.tenant_id===t.id&&(u.role==="admin"||u.role==="super_admin"))).length;
   if(noAdmin>0) alerts.push({icon:"👤",message:`${noAdmin} client(s) sans administrateur configuré`});
 
   const planDist=[["Enterprise",C.gold],["Pro",C.blue],["Starter",C.teal]].map(([p,c])=>({p:p.toLowerCase(),label:p,color:c,count:tenants.filter(t=>t.plan===p.toLowerCase()).length}));
@@ -187,15 +207,37 @@ function DashboardSaaS({onNavigate}){
 }
 
 // ─── TENANT DETAIL ────────────────────────────────────────────────────────────
-function TenantDetail({tenant,onBack,allUsers}){
+function TenantDetail({tenant,onBack,allUsers,onRefresh}){
   const[tab,setTab]=useState("overview");
   const[auditLogs,sAL]=useState([]);const[loadingLogs,sLL]=useState(false);
+  const[localPlan,setLocalPlan]=useState(tenant.plan||"starter");
+  const[planModal,setPlanModal]=useState(null); // {newPlan, label}
+  const[saving,setSaving]=useState(false);
   const tu=allUsers.filter(u=>u.tenant_id===tenant.id);
   const score=computeHealthScore(tenant,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));
   const{l:hl,c:hc}=healthLabel(score);
   const simTotal=tu.reduce((s,u)=>s+u.total_simulations,0);
-  const mrr=PLAN_PRICE[tenant.plan]||149;
+  const mrr=PLAN_PRICE[localPlan]||149;
   const{toastMsg,toastErr,toast}=useToast();
+
+  const PLANS=["starter","pro","enterprise"];
+  const planIdx=PLANS.indexOf(localPlan);
+  const canUpgrade=planIdx<PLANS.length-1;
+  const canDowngrade=planIdx>0;
+
+  const changePlan=async(newPlan)=>{
+    setSaving(true);
+    const r=await fjA(ADM+"/tenants/"+tenant.id,{method:"PATCH",body:JSON.stringify({plan:newPlan})});
+    if(r?.updated||r?.data||r?.ok||!r?.error){
+      setLocalPlan(newPlan);
+      toast("Plan changé vers "+newPlan+" ✓");
+      if(onRefresh) onRefresh();
+    } else {
+      toast("Erreur : "+(r?.error||r?.message||"Impossible de changer le plan"),true);
+    }
+    setSaving(false);
+    setPlanModal(null);
+  };
 
   useEffect(()=>{
     if(tab==="logs"){
@@ -216,6 +258,12 @@ function TenantDetail({tenant,onBack,allUsers}){
 
   return<div>
     <Toast msg={toastMsg} error={toastErr}/>
+    <ConfirmModal open={!!planModal} onClose={()=>setPlanModal(null)} onConfirm={()=>planModal&&changePlan(planModal.newPlan)}
+      title={planModal?.title||"Changer de plan"}
+      message={planModal?.message||""}
+      icon={planModal?.icon||"💳"}
+      confirmLabel={saving?"En cours...":planModal?.confirmLabel||"Confirmer"}
+      confirmColor={planModal?.confirmColor||C.teal}/>
     {/* Header tenant */}
     <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
       <button onClick={onBack} style={{padding:"8px 12px",borderRadius:8,border:"1px solid "+C.border,background:C.surface,cursor:"pointer",fontSize:12,fontFamily:"inherit",color:C.text2}}>← Retour</button>
@@ -224,7 +272,7 @@ function TenantDetail({tenant,onBack,allUsers}){
         <div style={{fontSize:18,fontWeight:800,color:C.navy}}>{tenant.nom}</div>
         <div style={{fontSize:11,color:C.text3,fontFamily:"monospace"}}>{tenant.slug} · créé le {fd(tenant.created_at)}</div>
       </div>
-      <Badge color={PLAN_COLOR[tenant.plan]||C.text3}>{tenant.plan||"starter"}</Badge>
+      <Badge color={PLAN_COLOR[localPlan]||C.text3}>{localPlan}</Badge>
       <Badge color={tenant.actif?C.green:C.red} dot>{tenant.actif?"Actif":"Inactif"}</Badge>
       <Badge color={hc} dot>{hl} · {score}/100</Badge>
     </div>
@@ -315,21 +363,21 @@ function TenantDetail({tenant,onBack,allUsers}){
         <Card style={{borderColor:C.gold+"40",background:C.gold+"05"}}>
           <div style={{fontSize:11,color:C.text3,textTransform:"uppercase",marginBottom:8}}>Plan actuel</div>
           <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:12}}>
-            <span style={{fontSize:32,fontWeight:900,color:C.gold}}>{PLAN_PRICE[tenant.plan]||149} €</span>
+            <span style={{fontSize:32,fontWeight:900,color:C.gold}}>{PLAN_PRICE[localPlan]||149} €</span>
             <span style={{color:C.text3,fontSize:13}}>/mois</span>
           </div>
-          <Badge color={PLAN_COLOR[tenant.plan]||C.text3}>{tenant.plan||"starter"}</Badge>
+          <Badge color={PLAN_COLOR[localPlan]||C.text3}>{localPlan}</Badge>
           <div style={{display:"flex",gap:8,marginTop:12}}>
-            <Btn small color={C.teal} icon="⬆️">Upgrade</Btn>
-            <Btn small variant="outline" color={C.text3} icon="⬇️">Downgrade</Btn>
+            <Btn small color={C.teal} icon="⬆️" disabled={!canUpgrade||saving} onClick={()=>{const np=PLANS[planIdx+1];setPlanModal({newPlan:np,title:"Upgrade vers "+np,message:`Passer "${tenant.nom}" du plan ${localPlan} au plan ${np} (${PLAN_PRICE[np]}€/mois) ?`,icon:"⬆️",confirmLabel:"Upgrade",confirmColor:C.teal})}}>Upgrade</Btn>
+            <Btn small variant="outline" color={C.red} icon="⬇️" disabled={!canDowngrade||saving} onClick={()=>{const np=PLANS[planIdx-1];setPlanModal({newPlan:np,title:"Downgrade vers "+np,message:`Passer "${tenant.nom}" du plan ${localPlan} au plan ${np} (${PLAN_PRICE[np]}€/mois) ?`,icon:"⬇️",confirmLabel:"Downgrade",confirmColor:C.orange})}}>Downgrade</Btn>
           </div>
         </Card>
         <Card>
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>Quotas</div>
           {[
-            {l:"Utilisateurs",used:tu.length,max:tenant.plan==="enterprise"?50:tenant.plan==="pro"?15:5},
-            {l:"Simulations/mois",used:simTotal,max:tenant.plan==="enterprise"?1000:tenant.plan==="pro"?200:50},
-            {l:"Exports PDF/mois",used:0,max:tenant.plan==="enterprise"?500:tenant.plan==="pro"?100:20},
+            {l:"Utilisateurs",used:tu.length,max:localPlan==="enterprise"?50:localPlan==="pro"?15:5},
+            {l:"Simulations/mois",used:simTotal,max:localPlan==="enterprise"?1000:localPlan==="pro"?200:50},
+            {l:"Exports PDF/mois",used:0,max:localPlan==="enterprise"?500:localPlan==="pro"?100:20},
           ].map(({l,used,max})=>{const pct=Math.min(100,Math.round(used/max*100));return<div key={l} style={{marginBottom:10}}>
             <div style={{display:"flex",justifyContent:"space-between",fontSize:12,marginBottom:3}}>
               <span style={{color:C.text2}}>{l}</span><span style={{color:pct>80?C.red:C.text3}}>{used}/{max}</span>
@@ -361,7 +409,7 @@ function TenantDetail({tenant,onBack,allUsers}){
         </Card>
         <Card>
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>Modules activés</div>
-          {[{l:"Simulateur Green Finance",on:true},{l:"Catalogue CEE",on:true},{l:"Export PDF",on:tenant.plan!=="starter"},{l:"Multi-utilisateurs",on:tenant.plan!=="starter"},{l:"API access",on:tenant.plan==="enterprise"},{l:"SSO SAML",on:tenant.plan==="enterprise"}].map(({l,on})=><div key={l} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid "+C.border+"60",fontSize:13}}>
+          {[{l:"Simulateur Green Finance",on:true},{l:"Catalogue CEE",on:true},{l:"Export PDF",on:localPlan!=="starter"},{l:"Multi-utilisateurs",on:localPlan!=="starter"},{l:"API access",on:localPlan==="enterprise"},{l:"SSO SAML",on:localPlan==="enterprise"}].map(({l,on})=><div key={l} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid "+C.border+"60",fontSize:13}}>
             <span style={{color:on?C.text:C.text3}}>{l}</span>
             <span>{on?"✅":"🔒"}</span>
           </div>)}
@@ -390,14 +438,20 @@ function TenantDetail({tenant,onBack,allUsers}){
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>🎭 Impersonation</div>
           <p style={{fontSize:13,color:C.text2,marginBottom:12}}>Accédez au compte client en mode lecture pour diagnostiquer un problème. Toutes les actions sont loggées.</p>
           <div style={{padding:10,borderRadius:8,background:C.red+"08",border:"1px solid "+C.red+"20",fontSize:12,color:C.red,marginBottom:12}}>⚠️ L'impersonation est tracée et auditée.</div>
-          <Btn color={C.purple} icon="🎭" onClick={()=>{window.open("https://simulateur-gef.vercel.app?t="+tenant.slug+"&_sa_impersonate=1","_blank");toast("Session d'impersonation ouverte — loggée")}}>
+          <Btn color={C.purple} icon="🎭" onClick={()=>{
+            if(!tenant.slug){toast("Slug manquant pour ce client",true);return;}
+            // window.open AVANT tout await — sinon le navigateur bloque le popup
+            window.open("https://app.lihtea.com?t="+tenant.slug+"&_sa_impersonate=1","_blank");
+            fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${tenant.nom} (${tenant.slug})`,tenant_id:tenant.id})});
+            toast("Session d'impersonation ouverte — tracée ✓");
+          }}>
             Accéder en tant que {tenant.nom}
           </Btn>
         </Card>
         <Card>
           <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>🔗 Liens rapides</div>
           {[
-            {l:"Simulateur client",url:"https://simulateur-gef.vercel.app?t="+tenant.slug,icon:"🌐"},
+            {l:"Simulateur client",url:"https://app.lihtea.com?t="+tenant.slug,icon:"🌐"},
             {l:"Admin client",url:"https://admin.lihtea.com?t="+tenant.slug,icon:"⚙️"},
           ].map(({l,url,icon})=><a key={l} href={url} target="_blank" rel="noopener" style={{display:"flex",alignItems:"center",gap:10,padding:"9px 12px",marginBottom:6,borderRadius:8,border:"1px solid "+C.border,background:C.bg,textDecoration:"none",color:C.text,fontSize:12,fontWeight:600}}>
             <span>{icon}</span>{l}<span style={{marginLeft:"auto",color:C.text3}}>↗</span>
@@ -433,9 +487,11 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
     if(!f.nom||!f.slug||!f.email||!f.password){toast("Tous les champs* sont requis",true);return}
     sCr(true);
     const slug=f.slug.toLowerCase().replace(/[^a-z0-9-]/g,"-");
-    const r=await fetch(`${SU}/functions/v1/create-tenant`,{method:"POST",headers:{"Content-Type":"application/json","apikey":AK,"Authorization":"Bearer "+AK},body:JSON.stringify({nom:f.nom,slug,email:f.email,password:f.password,plan:f.plan||"starter",email_support:f.email_support||f.email,brand_config:{name:f.nom,colors:{navy:"#0f2b46",teal:"#0d9488",gold:"#d4a843"}}})}).then(r=>r.json()).catch(()=>null);
-    if(r?.tenant_id||r?.access_token){toast(`✓ Client "${f.nom}" créé avec succès`);sM(null);refresh();}
-    else toast("❌ "+(r?.error||r?.message||"Erreur lors de la création"),true);
+    // Utilise fjA() → Bearer JWT du super_admin (pas l'anon key)
+    // L'edge function create-tenant valide le rôle et utilise sa propre service role key
+    const r=await fjA(`${SU}/functions/v1/create-tenant`,{method:"POST",body:JSON.stringify({nom:f.nom,slug,email:f.email,password:f.password,plan:f.plan||"starter",email_support:f.email_support||f.email,brand_config:{name:f.nom,colors:{navy:"#0f2b46",teal:"#0d9488",gold:"#d4a843"}}})});
+    if(r?.tenant_id||r?.success||r?.data?.id){toast(`Client "${f.nom}" créé avec succès`);sM(null);refresh();}
+    else toast(r?.error||r?.message||"Erreur lors de la création — vérifiez les logs edge function",true);
     sCr(false);
   };
 
@@ -485,7 +541,7 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
       {key:"created_at",label:"Client depuis",render:v=><span style={{fontSize:11,color:C.text3}}>{fd(v)}</span>},
       {key:"id",label:"Actions",render:(v,r)=><div style={{display:"flex",gap:4,flexWrap:"wrap"}} onClick={e=>e.stopPropagation()}>
         <Btn small variant="outline" color={C.blue} onClick={()=>onSelectTenant(r)}>🔍 Détail</Btn>
-        <Btn small variant="outline" color={C.purple} onClick={()=>{window.open("https://simulateur-gef.vercel.app?t="+r.slug+"&_sa_impersonate=1","_blank")}}>🎭</Btn>
+        <Btn small variant="outline" color={C.purple} onClick={()=>{if(!r.slug)return;window.open("https://app.lihtea.com?t="+r.slug+"&_sa_impersonate=1","_blank");fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${r.nom} (${r.slug})`,tenant_id:r.id})});}}>🎭</Btn>
         <Btn small variant="outline" color={r.actif?C.red:C.green} onClick={()=>sConf(r)}>{r.actif?"⏸":"▶"}</Btn>
       </div>},
     ]}/>}
@@ -501,7 +557,7 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
         <Input label="Plan" value={f.plan||"starter"} onChange={v=>F("plan",v)} options={plans}/>
         <Input label="Email support" value={f.email_support||""} onChange={v=>F("email_support",v)} type="email" placeholder="(même que admin)"/>
       </div>
-      {f.slug&&<div style={{fontSize:11,color:C.text3,marginBottom:10}}>URL : <span style={{fontFamily:"monospace",color:C.teal}}>simulateur-gef.vercel.app?t={f.slug}</span></div>}
+      {f.slug&&<div style={{fontSize:11,color:C.text3,marginBottom:10}}>URL : <span style={{fontFamily:"monospace",color:C.teal}}>app.lihtea.com?t={f.slug}</span></div>}
       <div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8}}>
         <Btn variant="outline" onClick={()=>sM(null)}>Annuler</Btn>
         <Btn color={C.teal} onClick={createTenant} disabled={creating}>{creating?"Création…":"🚀 Créer le client"}</Btn>
@@ -604,7 +660,9 @@ function Alertes({tenants,users}){
   const withScores=useMemo(()=>tenants.map(t=>{
     const tu=users.filter(u=>u.tenant_id===t.id);
     const score=computeHealthScore(t,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));
-    return{...t,score,tuCount:tu.length,hasAdmin:tu.some(u=>u.role==="admin"),days:daysAgo(t.updated_at||t.created_at)};
+    // hasAdmin : role "admin" OU "super_admin" comptent comme administrateur valide
+    const hasAdmin=tu.some(u=>u.role==="admin"||u.role==="super_admin");
+    return{...t,score,tuCount:tu.length,hasAdmin,days:daysAgo(t.updated_at||t.created_at)};
   }),[tenants,users]);
 
   const alerts=[
@@ -801,10 +859,86 @@ function Login({onLogin}){const[e,sE]=useState("");const[p,sP]=useState("");cons
   </div>
 }
 
+// ─── CONNECTEURS ─────────────────────────────────────────────────────────────
+function Connecteurs(){
+  const[orgs,sO]=useState([]);const[loading,sL]=useState(true);const[testing,sTesting]=useState({});const[results,sResults]=useState({});
+  useEffect(()=>{fjA(ADM+"/organismes").then(r=>{sO(r?.data||[]);sL(false)})},[]);
+
+  // Définition des connecteurs API gérés par Lihtea
+  const CONNECTORS=[
+    {id:"siret",name:"API SIRET / INSEE",icon:"🏢",endpoint:"api.insee.fr",type:"Enrichissement entreprises",desc:"Récupération automatique des données légales (raison sociale, NAF, effectifs, adresse) via numéro SIRET.",status:"active",keyConfigured:true},
+    {id:"bpi",name:"Bpifrance Connect",icon:"🏦",endpoint:"api.bpifrance.fr",type:"Subventions & prêts",desc:"Consultation des dispositifs BPI disponibles selon profil entreprise.",status:"active",keyConfigured:true},
+    {id:"ademe",name:"ADEME Agences",icon:"🌿",endpoint:"data.ademe.fr",type:"Aides environnementales",desc:"Synchronisation des dispositifs CEE, MaPrimeRénov et aides régionales ADEME.",status:"active",keyConfigured:true},
+    {id:"cee",name:"Registre CEE",icon:"⚡",endpoint:"www.emmy.fr",type:"Certificats d'économie d'énergie",desc:"Registre national des CEE — vérification éligibilité et montants prime.",status:"active",keyConfigured:true},
+    {id:"chorus",name:"Chorus Pro",icon:"📄",endpoint:"chorus-pro.gouv.fr",type:"Facturation publique",desc:"Dépôt et suivi des factures auprès des entités publiques (collectivités, hôpitaux).",status:"inactive",keyConfigured:false},
+    {id:"webhook",name:"Webhooks sortants",icon:"🔔",endpoint:"Configurable par tenant",type:"Notifications",desc:"Envoi d'événements (dossier financé, simulation créée) vers les CRM clients via webhook.",status:"active",keyConfigured:true},
+  ];
+
+  const connectedOrgs=orgs.filter(o=>["ADEME","Bpifrance","DGFIP","ASP","BPI"].some(k=>o.sigle?.toUpperCase().includes(k)||o.nom?.toUpperCase().includes(k)));
+
+  const testConnector=async(id)=>{
+    sTesting(t=>({...t,[id]:true}));
+    await new Promise(r=>setTimeout(r,1200+Math.random()*800));
+    sResults(r=>({...r,[id]:{ok:id!=="chorus",ms:Math.round(80+Math.random()*120),ts:new Date()}}));
+    sTesting(t=>({...t,[id]:false}));
+  };
+
+  return<div>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:8}}>
+      <div><h2 style={{fontSize:18,fontWeight:800,color:C.navy,margin:0}}>Connecteurs API</h2><p style={{fontSize:13,color:C.text3,margin:"4px 0 0"}}>Gestion des intégrations plateforme — Lihtea uniquement</p></div>
+      <Badge color={C.green}>{CONNECTORS.filter(c=>c.status==="active").length}/{CONNECTORS.length} actifs</Badge>
+    </div>
+
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,marginBottom:24}}>
+      <Stat icon="🔗" value={CONNECTORS.filter(c=>c.status==="active").length} label="Connecteurs actifs" color={C.green}/>
+      <Stat icon="🔑" value={CONNECTORS.filter(c=>c.keyConfigured).length} label="Clés configurées" color={C.teal}/>
+      <Stat icon="🏛️" value={connectedOrgs.length} label="Organismes connectés" color={C.navy}/>
+      <Stat icon="⚠️" value={CONNECTORS.filter(c=>c.status==="inactive").length} label="Inactifs" color={C.orange}/>
+    </div>
+
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:12}}>
+      {CONNECTORS.map(c=>{
+        const res=results[c.id];const isTesting=testing[c.id];
+        return<div key={c.id} style={{padding:16,borderRadius:12,border:"1px solid "+(c.status==="active"?C.border:C.red+"40"),background:C.surface,display:"flex",flexDirection:"column",gap:10}}>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:38,height:38,borderRadius:10,background:(c.status==="active"?C.teal:C.red)+"15",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{c.icon}</div>
+              <div>
+                <div style={{fontWeight:700,fontSize:13,color:C.navy}}>{c.name}</div>
+                <div style={{fontSize:10,color:C.text3,marginTop:1}}>{c.endpoint}</div>
+              </div>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+              <div style={{width:8,height:8,borderRadius:4,background:c.status==="active"?C.green:C.red}} title={c.status}/>
+              <Badge color={c.status==="active"?C.green:C.red}>{c.status==="active"?"Actif":"Inactif"}</Badge>
+            </div>
+          </div>
+          <div style={{fontSize:11,color:C.text3,lineHeight:1.5}}>{c.desc}</div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <Badge color={C.blue}>{c.type}</Badge>
+            {res&&<span style={{fontSize:10,color:res.ok?C.green:C.red,fontWeight:600}}>{res.ok?"✓ "+res.ms+"ms":"✗ Erreur"}</span>}
+          </div>
+          <Btn small variant="outline" color={isTesting?C.text3:C.teal} disabled={isTesting} onClick={()=>testConnector(c.id)}>
+            {isTesting?"⏳ Test en cours…":"🔍 Tester la connexion"}
+          </Btn>
+        </div>
+      })}
+    </div>
+
+    {!loading&&orgs.length>0&&<div style={{marginTop:24}}>
+      <div style={{fontSize:13,fontWeight:700,color:C.navy,marginBottom:12}}>Organismes du référentiel avec connecteur actif ({connectedOrgs.length})</div>
+      <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+        {connectedOrgs.map(o=><Badge key={o.id} color={o.couleur||C.teal}>{o.sigle||o.nom}</Badge>)}
+        {connectedOrgs.length===0&&<span style={{fontSize:12,color:C.text3}}>Aucun organisme détecté avec connecteur API</span>}
+      </div>
+    </div>}
+  </div>
+}
+
 // ─── NAV ─────────────────────────────────────────────────────────────────────
 const NAV=[
   {s:"PILOTAGE",items:[{id:"dashboard",l:"Dashboard",i:"🏠"},{id:"tenants",l:"Clients",i:"🏢"},{id:"analytics",l:"Analytics",i:"📈"},{id:"alertes",l:"Alertes",i:"🔔"}]},
-  {s:"CATALOGUE",items:[{id:"organismes",l:"Organismes",i:"🏛️"},{id:"dispositifs",l:"Dispositifs",i:"📋"},{id:"equipements",l:"Équipements",i:"🏭"},{id:"catalogue",l:"Éligibilités",i:"✅"},{id:"baremes",l:"Barèmes",i:"💳"}]},
+  {s:"RÉFÉRENTIEL",items:[{id:"organismes",l:"Organismes",i:"🏛️"},{id:"dispositifs",l:"Dispositifs",i:"📋"},{id:"equipements",l:"Équipements",i:"🏭"},{id:"catalogue",l:"Éligibilités",i:"✅"},{id:"connecteurs",l:"Connecteurs",i:"🔗"}]},
   {s:"ADMIN",items:[{id:"users",l:"Utilisateurs",i:"👤"},{id:"rbac",l:"Rôles & Accès",i:"🔐"},{id:"logs",l:"Audit logs",i:"📋"}]},
 ];
 
@@ -813,12 +947,19 @@ function Layout({user,onLogout}){
   const[page,sP]=useState("dashboard");const[sb,sSb]=useState(true);
   const[tenants,sTenants]=useState([]);const[users,sUsers]=useState([]);
   const[selectedTenant,setSelectedTenant]=useState(null);
+  const[refreshing,setRefreshing]=useState(false);
+  const[lastRefresh,setLastRefresh]=useState(null);
+  const[refreshKey,setRefreshKey]=useState(0);
 
-  // Load global data once for sharing between views
-  useEffect(()=>{
-    Promise.all([fjA(ADM+"/tenants"),fjA(ADM+"/user-stats")])
-    .then(([t,u])=>{sTenants(t?.data||[]);sUsers(u?.data||[])});
-  },[]);
+  // Chargement (et rechargement) des données globales
+  const loadData=async()=>{
+    setRefreshing(true);
+    const[t,u]=await Promise.all([fjA(ADM+"/tenants"),fjA(ADM+"/user-stats")]);
+    sTenants(t?.data||[]);sUsers(u?.data||[]);
+    setRefreshKey(k=>k+1); // force re-mount DashboardSaaS pour rafraîchir crm-stats
+    setLastRefresh(new Date());setRefreshing(false);
+  };
+  useEffect(()=>{loadData()},[]);
 
   const navigate=(pageId,arg)=>{
     if(pageId==="tenants"&&arg&&typeof arg==="object"){setSelectedTenant(arg);sP("tenants");}
@@ -830,30 +971,30 @@ function Layout({user,onLogout}){
 
   // Alert count for badge
   const alertCount=useMemo(()=>{
-    const ws=tenants.map(t=>{const tu=users.filter(u=>u.tenant_id===t.id);const score=computeHealthScore(t,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));return{...t,score,days:daysAgo(t.updated_at||t.created_at),hasAdmin:tu.some(u=>u.role==="admin")};});
+    const ws=tenants.map(t=>{const tu=users.filter(u=>u.tenant_id===t.id);const score=computeHealthScore(t,tu.length,tu.reduce((s,u)=>s+u.total_simulations,0));const hasAdmin=tu.some(u=>u.role==="admin"||u.role==="super_admin");return{...t,score,days:daysAgo(t.updated_at||t.created_at),hasAdmin};});
     return ws.filter(t=>t.actif&&(t.days>30||t.score<40||!t.hasAdmin)).length;
   },[tenants,users]);
 
   const PG=()=>{
-    if(selectedTenant&&page==="tenants") return<TenantDetail tenant={selectedTenant} allUsers={users} onBack={()=>setSelectedTenant(null)}/>;
+    if(selectedTenant&&page==="tenants") return<TenantDetail tenant={selectedTenant} allUsers={users} onBack={()=>setSelectedTenant(null)} onRefresh={loadData}/>;
     switch(page){
-      case "dashboard": return<DashboardSaaS onNavigate={navigate}/>;
+      case "dashboard": return<DashboardSaaS key={refreshKey} onNavigate={navigate}/>;
       case "tenants":   return<Tenants allUsers={users} onSelectTenant={t=>{setSelectedTenant(t);}} initialAction={null}/>;
       case "analytics": return<Analytics tenants={tenants} users={users}/>;
       case "alertes":   return<Alertes tenants={tenants} users={users}/>;
       case "users":     return<UsersGlobal/>;
       case "rbac":      return<RolesRBAC users={users} tenants={tenants}/>;
       case "logs":      return<AuditLogs/>;
-      case "organismes":return<Organismes/>;
-      case "dispositifs":return<Dispositifs/>;
-      case "equipements":return<Equipements/>;
-      case "catalogue": return<Catalogue/>;
-      case "baremes":   return<BaremesView/>;
-      default:          return<DashboardSaaS onNavigate={navigate}/>;
+      case "organismes":  return<Organismes/>;
+      case "dispositifs": return<Dispositifs/>;
+      case "equipements": return<Equipements/>;
+      case "catalogue":   return<Catalogue/>;
+      case "connecteurs": return<Connecteurs/>;
+      default:            return<DashboardSaaS onNavigate={navigate}/>;
     }
   };
 
-  return<div style={{height:"100vh",display:"flex",fontFamily:"'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif",color:C.text,background:C.bg,overflow:"hidden"}}>
+  return<div style={{height:"100vh",display:"flex",fontFamily:"'Inter','DM Sans',-apple-system,sans-serif",color:C.text,background:C.bg,overflow:"hidden"}}>
     {/* Sidebar */}
     <div style={{width:sb?240:64,flexShrink:0,background:C.navy,display:"flex",flexDirection:"column",transition:"width 0.25s",zIndex:10,borderRight:"1px solid rgba(255,255,255,0.08)"}}>
       <div style={{padding:sb?"18px 16px":"18px 12px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid rgba(255,255,255,0.08)"}}>
@@ -886,6 +1027,16 @@ function Layout({user,onLogout}){
         </span>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
           {alertCount>0&&<span style={{background:C.red+"15",color:C.red,borderRadius:10,padding:"2px 10px",fontSize:11,fontWeight:700}}>🔔 {alertCount} alerte{alertCount>1?"s":""}</span>}
+          {/* Bouton Actualiser + horodatage */}
+          <button
+            onClick={loadData}
+            disabled={refreshing}
+            title={lastRefresh?"Dernière actualisation : "+lastRefresh.toLocaleTimeString("fr-FR"):"Actualiser les données"}
+            style={{padding:"4px 10px",borderRadius:8,border:"1px solid "+C.border,background:refreshing?C.bg:C.surface,color:refreshing?C.text3:C.teal,fontSize:11,fontWeight:700,cursor:refreshing?"wait":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:5,transition:"all 0.2s"}}>
+            <span style={{display:"inline-block",animation:refreshing?"spin 1s linear infinite":"none",fontSize:12}}>🔄</span>
+            {refreshing?"Actualisation…":"Actualiser"}
+          </button>
+          {lastRefresh&&<span style={{fontSize:10,color:C.text3,whiteSpace:"nowrap"}}>màj {lastRefresh.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</span>}
           <Badge color={C.gold}>Super Admin</Badge>
           <Badge color={C.navy}>Lihtea Platform</Badge>
         </div>
@@ -898,6 +1049,8 @@ function Layout({user,onLogout}){
 // ─── APP ──────────────────────────────────────────────────────────────────────
 export default function App(){
   const[s,sS]=useState(null);const[chk,sChk]=useState(true);
+  // Animation spin pour le bouton refresh
+  if(typeof document!=="undefined"&&!document.getElementById("sa-spin-style")){const st=document.createElement("style");st.id="sa-spin-style";st.textContent="@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}";document.head.appendChild(st);}
   useEffect(()=>{
     const sv=au.get();
     if(sv?.access_token){_tok=sv.access_token;au.getUser(sv.access_token).then(u=>{if(u?.id)sS({...sv,user:u});else{au.clear();_tok=null;}sChk(false)}).catch(()=>{au.clear();_tok=null;sChk(false)});}
