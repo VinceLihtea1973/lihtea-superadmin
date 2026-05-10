@@ -6,13 +6,24 @@ const AK  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 const API = `${SU}/functions/v1`;
 const CAT = `${API}/catalogue-api`, ADM = `${API}/admin-api`, AUTH = `${SU}/auth/v1`;
 
+// ── PALETTE V5 ── (alignée avec simulateur + admin — ScoreFinance + teal Lihtea)
 const C = {
-  navy:"#0f2b46",navyL:"#1a3d5c",teal:"#0d9488",tealB:"#14b8a6",tealBg:"#f0fdfa",
-  gold:"#d4a843",bg:"#f6f8fb",surface:"#fff",border:"#e1e7ef",
-  text:"#1a2332",text2:"#4a5568",text3:"#8896a7",
-  red:"#dc2626",green:"#059669",purple:"#7c3aed",blue:"#2563eb",orange:"#ea580c",
-  amber:"#d97706",pink:"#db2777",cyan:"#0891b2",
+  navy:"#0B1D35", navyL:"#163354",
+  teal:"#0d9488", tealB:"#14b8a6", tealBg:"#E0F5EE",
+  gold:"#14b8a6",
+  bg:"#F7F6F3",
+  surface:"#FFFFFF",
+  border:"#EDECEA", borderStrong:"#D3D1C7",
+  text:"#2C2C2A", text2:"#5F5E5A", text3:"#888780",
+  red:"#B02020", redBg:"#FDEAEA",
+  green:"#0E7A5F", greenBg:"#E0F5EE",
+  amber:"#C07A10", amberBg:"#FDF3E0",
+  purple:"#7c3aed", blue:"#2563eb", orange:"#ea580c",
+  pink:"#db2777", cyan:"#0891b2",
 };
+const SH = { sm:"0 1px 3px rgba(11,29,53,.08)", md:"0 4px 16px rgba(11,29,53,.10)" };
+const R  = { sm:6, md:10, lg:16 };
+const F  = { body:"'Sora','DM Sans',-apple-system,BlinkMacSystemFont,sans-serif", mono:"'DM Mono','JetBrains Mono','SF Mono',monospace" };
 
 // ─── UTILITIES ────────────────────────────────────────────────────────────────
 const fj  = async(u,o={})=>{try{return await(await fetch(u,{headers:{"Content-Type":"application/json"},...o})).json()}catch{return null}};
@@ -936,10 +947,26 @@ function Connecteurs(){
 }
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
+// ── Icônes SVG line v5 ──
+const ICN = {
+  dashboard:   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
+  tenants:     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M19 21V11a2 2 0 0 0-2-2h-2"/><line x1="9" y1="7" x2="11" y2="7"/><line x1="9" y1="11" x2="11" y2="11"/><line x1="9" y1="15" x2="11" y2="15"/></svg>,
+  analytics:   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  alertes:     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
+  organismes:  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/><line x1="12" y1="9" x2="12" y2="11"/></svg>,
+  dispositifs: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>,
+  equipements: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 22h20"/><path d="M3 22V11l7-5 7 5v11"/><path d="M9 22v-7h2v7"/><path d="M13 22v-4h2v4"/><circle cx="17" cy="9" r="1"/></svg>,
+  catalogue:   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+  connecteurs: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
+  users:       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
+  rbac:        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+  logs:        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+};
+
 const NAV=[
-  {s:"PILOTAGE",items:[{id:"dashboard",l:"Dashboard",i:"🏠"},{id:"tenants",l:"Clients",i:"🏢"},{id:"analytics",l:"Analytics",i:"📈"},{id:"alertes",l:"Alertes",i:"🔔"}]},
-  {s:"RÉFÉRENTIEL",items:[{id:"organismes",l:"Organismes",i:"🏛️"},{id:"dispositifs",l:"Dispositifs",i:"📋"},{id:"equipements",l:"Équipements",i:"🏭"},{id:"catalogue",l:"Éligibilités",i:"✅"},{id:"connecteurs",l:"Connecteurs",i:"🔗"}]},
-  {s:"ADMIN",items:[{id:"users",l:"Utilisateurs",i:"👤"},{id:"rbac",l:"Rôles & Accès",i:"🔐"},{id:"logs",l:"Audit logs",i:"📋"}]},
+  {s:"PILOTAGE",items:[{id:"dashboard",l:"Dashboard",i:ICN.dashboard},{id:"tenants",l:"Clients",i:ICN.tenants},{id:"analytics",l:"Analytics",i:ICN.analytics},{id:"alertes",l:"Alertes",i:ICN.alertes}]},
+  {s:"RÉFÉRENTIEL",items:[{id:"organismes",l:"Organismes",i:ICN.organismes},{id:"dispositifs",l:"Dispositifs",i:ICN.dispositifs},{id:"equipements",l:"Équipements",i:ICN.equipements},{id:"catalogue",l:"Éligibilités",i:ICN.catalogue},{id:"connecteurs",l:"Connecteurs",i:ICN.connecteurs}]},
+  {s:"ADMIN",items:[{id:"users",l:"Utilisateurs",i:ICN.users},{id:"rbac",l:"Rôles & Accès",i:ICN.rbac},{id:"logs",l:"Audit logs",i:ICN.logs}]},
 ];
 
 // ─── LAYOUT ──────────────────────────────────────────────────────────────────
@@ -994,54 +1021,78 @@ function Layout({user,onLogout}){
     }
   };
 
-  return<div style={{height:"100vh",display:"flex",fontFamily:"'Inter','DM Sans',-apple-system,sans-serif",color:C.text,background:C.bg,overflow:"hidden"}}>
-    {/* Sidebar */}
-    <div style={{width:sb?240:64,flexShrink:0,background:C.navy,display:"flex",flexDirection:"column",transition:"width 0.25s",zIndex:10,borderRight:"1px solid rgba(255,255,255,0.08)"}}>
-      <div style={{padding:sb?"18px 16px":"18px 12px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid rgba(255,255,255,0.08)"}}>
-        <div style={{width:36,height:36,borderRadius:8,background:"linear-gradient(135deg,"+C.gold+",#e8b84b)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:900,color:C.navy,flexShrink:0}}>L</div>
-        {sb&&<div><div style={{fontSize:13,fontWeight:800,color:"#fff"}}>Lihtea</div><div style={{fontSize:9,color:C.gold,textTransform:"uppercase",letterSpacing:"0.12em"}}>Super Admin</div></div>}
-      </div>
-      <nav style={{flex:1,padding:"8px 0",overflowY:"auto"}}>
-        {NAV.map(section=><div key={section.s}>
-          {sb&&<div style={{fontSize:9,fontWeight:700,color:"rgba(255,255,255,0.2)",padding:"14px 16px 4px",letterSpacing:"0.12em",textTransform:"uppercase"}}>{section.s}</div>}
-          {section.items.map(item=>{const isActive=(page===item.id&&!(selectedTenant&&item.id==="tenants"&&page==="tenants"))||(selectedTenant&&item.id==="tenants");
-          return<button key={item.id} onClick={()=>navigate(item.id)} style={{display:"flex",alignItems:"center",gap:10,padding:sb?"12px 16px":"12px",justifyContent:sb?"flex-start":"center",borderRadius:0,border:"none",borderLeft:isActive?"3px solid "+C.gold:"3px solid transparent",cursor:"pointer",width:"100%",background:isActive?"rgba(212,168,67,0.12)":"transparent",color:isActive?"#fff":"rgba(255,255,255,0.45)",fontSize:12,fontWeight:isActive?700:500,fontFamily:"inherit",transition:"all 0.15s",position:"relative"}}>
-            <span style={{fontSize:15,minWidth:20,textAlign:"center",color:isActive?C.gold:"inherit",flexShrink:0}}>{item.i}</span>
-            {sb&&<span>{item.l}</span>}
-            {item.id==="alertes"&&alertCount>0&&<span style={{marginLeft:"auto",background:C.red,color:"#fff",borderRadius:10,padding:"1px 6px",fontSize:10,fontWeight:700,flexShrink:0}}>{alertCount}</span>}
-          </button>;})}
-        </div>)}
-      </nav>
-      {sb&&user&&<div style={{padding:"8px 16px",borderTop:"1px solid rgba(255,255,255,0.08)",fontSize:11,color:"rgba(255,255,255,0.3)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.email}</div>}
-      <div style={{display:"flex",gap:6,padding:"10px 12px"}}>
-        <button onClick={()=>sSb(p=>!p)} style={{flex:1,padding:"7px",borderRadius:8,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",color:"rgba(255,255,255,0.35)",cursor:"pointer",fontSize:13,fontFamily:"inherit"}}>{sb?"◁":"▷"}</button>
-        <button onClick={onLogout} style={{padding:"7px 10px",borderRadius:8,border:"1px solid rgba(220,38,38,0.3)",background:"rgba(220,38,38,0.08)",color:"#ef4444",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>{sb?"Déconnexion":"⏻"}</button>
-      </div>
-    </div>
+  const initials = ((user?.email||"SA").slice(0,2)||"SA").toUpperCase();
+  return<div style={{height:"100vh",display:"flex",flexDirection:"column",fontFamily:F.body,color:C.text,background:C.bg,overflow:"hidden"}}>
+    <style>{`@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap'); body, input, button, select, textarea { font-family: ${F.body}; } ::-webkit-scrollbar { width: 8px; height: 8px; } ::-webkit-scrollbar-thumb { background: ${C.borderStrong}; border-radius: 4px; } ::-webkit-scrollbar-track { background: transparent; }`}</style>
 
-    {/* Main */}
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      <div style={{padding:"0 24px",borderBottom:"1px solid "+C.border,background:"rgba(255,255,255,0.98)",backdropFilter:"blur(12px)",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,height:50}}>
-        <span style={{fontSize:15,fontWeight:800,color:C.navy}}>
-          {selectedTenant?`🏢 ${selectedTenant.nom}`:`${nav?.i} ${nav?.l}`}
-        </span>
-        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          {alertCount>0&&<span style={{background:C.red+"15",color:C.red,borderRadius:10,padding:"2px 10px",fontSize:11,fontWeight:700}}>🔔 {alertCount} alerte{alertCount>1?"s":""}</span>}
-          {/* Bouton Actualiser + horodatage */}
-          <button
-            onClick={loadData}
-            disabled={refreshing}
-            title={lastRefresh?"Dernière actualisation : "+lastRefresh.toLocaleTimeString("fr-FR"):"Actualiser les données"}
-            style={{padding:"4px 10px",borderRadius:8,border:"1px solid "+C.border,background:refreshing?C.bg:C.surface,color:refreshing?C.text3:C.teal,fontSize:11,fontWeight:700,cursor:refreshing?"wait":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:5,transition:"all 0.2s"}}>
-            <span style={{display:"inline-block",animation:refreshing?"spin 1s linear infinite":"none",fontSize:12}}>🔄</span>
-            {refreshing?"Actualisation…":"Actualiser"}
-          </button>
-          {lastRefresh&&<span style={{fontSize:10,color:C.text3,whiteSpace:"nowrap"}}>màj {lastRefresh.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</span>}
-          <Badge color={C.gold}>Super Admin</Badge>
-          <Badge color={C.navy}>Lihtea Platform</Badge>
+    {/* TOPBAR v5 — 60px navy */}
+    <header style={{height:60,background:C.navy,display:"flex",alignItems:"center",padding:"0 24px",gap:16,flexShrink:0,borderBottom:"1px solid rgba(255,255,255,0.06)",zIndex:100}}>
+      <div style={{display:"flex",alignItems:"center",gap:10}}>
+        <div style={{width:30,height:30,background:C.tealB,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,color:"#fff"}}>L</div>
+        <span style={{fontSize:15,fontWeight:700,color:"#fff",letterSpacing:"-0.3px"}}>Lihtea</span>
+      </div>
+      <div style={{width:1,height:24,background:"rgba(255,255,255,0.12)",margin:"0 4px"}}/>
+      <span style={{fontSize:12,color:"rgba(255,255,255,0.5)"}}>{selectedTenant?selectedTenant.nom:(nav?.l||"Super Admin")}</span>
+      <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:12}}>
+        <button onClick={loadData} disabled={refreshing} title={lastRefresh?"Dernière actualisation : "+lastRefresh.toLocaleTimeString("fr-FR"):"Actualiser"}
+          style={{padding:"6px 12px",borderRadius:R.sm,border:"1px solid rgba(255,255,255,0.12)",background:"rgba(255,255,255,0.06)",color:"rgba(255,255,255,0.85)",fontSize:11,fontWeight:600,cursor:refreshing?"wait":"pointer",fontFamily:F.body,display:"flex",alignItems:"center",gap:6,transition:"all 0.2s"}}>
+          <span style={{display:"inline-block",animation:refreshing?"spin 1s linear infinite":"none"}}>↻</span>
+          {refreshing?"Actualisation…":"Actualiser"}
+        </button>
+        {lastRefresh&&<span style={{fontSize:10,color:"rgba(255,255,255,0.4)",whiteSpace:"nowrap"}}>màj {lastRefresh.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</span>}
+        <span style={{background:"rgba(255,255,255,0.08)",color:"rgba(255,255,255,0.75)",fontSize:11,padding:"4px 10px",borderRadius:20,border:"1px solid rgba(255,255,255,0.1)"}}>✨ Super Admin</span>
+        <div style={{width:32,height:32,borderRadius:"50%",background:C.tealB,color:"#fff",fontSize:12,fontWeight:600,display:"flex",alignItems:"center",justifyContent:"center"}} title={user?.email||""}>{initials}</div>
+      </div>
+    </header>
+
+    <div style={{flex:1,display:"flex",overflow:"hidden"}}>
+      {/* SIDEBAR v5 — claire avec sections */}
+      <aside style={{width:sb?240:64,flexShrink:0,background:C.surface,display:"flex",flexDirection:"column",transition:"width 0.25s cubic-bezier(0.4,0,0.2,1)",zIndex:10,borderRight:"1px solid "+C.border,height:"100%",overflow:"hidden"}}>
+        <nav style={{flex:1,padding:"6px 10px",display:"flex",flexDirection:"column",overflowY:"auto",overflowX:"hidden",gap:2}}>
+          {NAV.map(section=><div key={section.s}>
+            {sb&&<div style={{fontSize:10,fontWeight:600,color:C.text3,padding:"14px 8px 6px",letterSpacing:"0.08em",textTransform:"uppercase"}}>{section.s}</div>}
+            {section.items.map(item=>{const isActive=(page===item.id&&!(selectedTenant&&item.id==="tenants"&&page==="tenants"))||(selectedTenant&&item.id==="tenants");
+            return<button key={item.id} onClick={()=>navigate(item.id)} title={!sb?item.l:""} style={{
+              display:"flex",alignItems:"center",gap:10,
+              padding:sb?"8px 10px":"10px 8px",
+              justifyContent:sb?"flex-start":"center",
+              borderRadius:R.sm,border:"none",cursor:"pointer",width:"100%",
+              background:isActive?C.tealBg:"transparent",
+              color:isActive?C.teal:C.text2,
+              fontSize:13,fontWeight:isActive?500:400,fontFamily:F.body,
+              transition:"all 0.18s ease",whiteSpace:"nowrap",marginBottom:2,position:"relative"
+            }}
+            onMouseEnter={e=>{if(!isActive){e.currentTarget.style.background=C.bg;e.currentTarget.style.color=C.text}}}
+            onMouseLeave={e=>{if(!isActive){e.currentTarget.style.background="transparent";e.currentTarget.style.color=C.text2}}}>
+              <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",flexShrink:0,minWidth:20,opacity:isActive?1:0.7}}>{item.i}</span>
+              {sb&&<span>{item.l}</span>}
+              {item.id==="alertes"&&alertCount>0&&<span style={{marginLeft:"auto",background:C.red,color:"#fff",borderRadius:10,padding:"1px 6px",fontSize:10,fontWeight:700,flexShrink:0}}>{alertCount}</span>}
+            </button>;})}
+          </div>)}
+        </nav>
+        <div style={{flexShrink:0,borderTop:"1px solid "+C.border,padding:sb?"8px 10px 10px":"8px 6px 10px",display:"flex",flexDirection:"column",gap:6}}>
+          {sb&&user&&<div style={{padding:"6px 10px",fontSize:11,color:C.text3,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={user.email}>{user.email}</div>}
+          <div style={{display:"flex",gap:6}}>
+            <button onClick={()=>sSb(p=>!p)} title={sb?"Réduire":"Déplier"} style={{flex:1,padding:"8px 4px",borderRadius:R.sm,border:"1px solid "+C.border,background:C.bg,color:C.text2,cursor:"pointer",fontSize:13,fontFamily:F.body,transition:"all .15s"}}>{sb?"◁":"▷"}</button>
+            <button onClick={onLogout} title="Déconnexion" style={{padding:"8px 10px",borderRadius:R.sm,border:"1px solid "+C.redBg,background:C.redBg,color:C.red,cursor:"pointer",fontSize:12,fontFamily:F.body,fontWeight:600,transition:"all .15s"}}>{sb?"Déconnexion":"⏻"}</button>
+          </div>
+        </div>
+      </aside>
+
+      {/* MAIN CONTENT v5 — fond beige warm */}
+      <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",background:C.bg}}>
+        <div style={{flex:1,overflow:"auto",padding:"24px 28px"}}>
+          {/* Page-header v5 */}
+          <div style={{marginBottom:24,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <span style={{display:"inline-flex",alignItems:"center",color:C.teal,opacity:0.85}}>{nav?.i}</span>
+              <h1 style={{fontSize:22,fontWeight:700,color:C.navy,letterSpacing:"-0.4px",margin:0,fontFamily:F.body}}>{selectedTenant?selectedTenant.nom:(nav?.l||"Super Admin")}</h1>
+            </div>
+            {alertCount>0&&<span style={{background:C.redBg,color:C.red,borderRadius:20,padding:"4px 12px",fontSize:11,fontWeight:700,border:"1px solid "+C.red+"33"}}>{alertCount} alerte{alertCount>1?"s":""}</span>}
+          </div>
+          <PG/>
         </div>
       </div>
-      <div style={{flex:1,overflow:"auto",padding:24}}><PG/></div>
     </div>
   </div>
 }
