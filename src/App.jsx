@@ -25,6 +25,47 @@ const SH = { sm:"0 1px 3px rgba(11,29,53,.08)", md:"0 4px 16px rgba(11,29,53,.10
 const R  = { sm:6, md:10, lg:16 };
 const F  = { body:"'Sora','DM Sans',-apple-system,BlinkMacSystemFont,sans-serif", mono:"'DM Mono','JetBrains Mono','SF Mono',monospace" };
 
+// ── Icônes SVG v5 (remplace les emojis old school) ──
+const SvgI = (size, paths) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"inline-block",verticalAlign:"middle"}}>{paths}</svg>;
+const Ico = {
+  edit:s=>SvgI(s||14,<><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>),
+  trash:s=>SvgI(s||14,<><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></>),
+  eye:s=>SvgI(s||14,<><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>),
+  close:s=>SvgI(s||14,<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>),
+  plus:s=>SvgI(s||14,<><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>),
+  check:s=>SvgI(s||14,<polyline points="20 6 9 17 4 12"/>),
+  refresh:s=>SvgI(s||14,<><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></>),
+  search:s=>SvgI(s||14,<><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>),
+  alert:s=>SvgI(s||14,<><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>),
+  phone:s=>SvgI(s||14,<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.49 12 19.79 19.79 0 0 1 1.42 3.35 2 2 0 0 1 3.4 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>),
+  mail:s=>SvgI(s||14,<><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></>),
+  doc:s=>SvgI(s||14,<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></>),
+  chart:s=>SvgI(s||14,<><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></>),
+  trend:s=>SvgI(s||14,<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>),
+  euro:s=>SvgI(s||14,<><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></>),
+  flame:s=>SvgI(s||14,<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>),
+  trophy:s=>SvgI(s||14,<><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></>),
+  building:s=>SvgI(s||14,<><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M19 21V11a2 2 0 0 0-2-2h-2"/><line x1="9" y1="7" x2="11" y2="7"/><line x1="9" y1="11" x2="11" y2="11"/><line x1="9" y1="15" x2="11" y2="15"/></>),
+  factory:s=>SvgI(s||14,<><path d="M2 22h20"/><path d="M3 22V11l7-5 7 5v11"/><path d="M9 22v-7h2v7"/><path d="M13 22v-4h2v4"/></>),
+  landmark:s=>SvgI(s||14,<><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></>),
+  user:s=>SvgI(s||14,<><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>),
+  users:s=>SvgI(s||14,<><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>),
+  star:s=>SvgI(s||14,<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>),
+  zap:s=>SvgI(s||14,<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>),
+  bell:s=>SvgI(s||14,<><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></>),
+  shield:s=>SvgI(s||14,<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>),
+  link:s=>SvgI(s||14,<><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></>),
+  card:s=>SvgI(s||14,<><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></>),
+  clock:s=>SvgI(s||14,<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>),
+  rocket:s=>SvgI(s||14,<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2zM9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>),
+  sleep:s=>SvgI(s||14,<><path d="M2 4h6v2L4 18h4v2H2v-2l4-12H2z"/><path d="M14 8h8v2l-6 10h6v2h-8v-2l6-10h-6z"/></>),
+  mask:s=>SvgI(s||14,<><path d="M19 11h2m-1-1v2M17 12c.5 0 1 .5 1 1v2c0 .5-.5 1-1 1h-1c-.5 0-1-.5-1-1v-2c0-.5.5-1 1-1zM6.5 11H4M5 10v2"/><path d="M2 12c0-3.86 3.14-7 7-7h6c3.86 0 7 3.14 7 7v0c0 3.86-3.14 7-7 7H9c-3.86 0-7-3.14-7-7v0z"/></>),
+  pin:s=>SvgI(s||14,<><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></>),
+  folder:s=>SvgI(s||14,<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>),
+  clipboard:s=>SvgI(s||14,<><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></>),
+  power:s=>SvgI(s||14,<><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></>),
+};
+
 // ─── UTILITIES ────────────────────────────────────────────────────────────────
 const fj  = async(u,o={})=>{try{return await(await fetch(u,{headers:{"Content-Type":"application/json"},...o})).json()}catch{return null}};
 let _tok  = null;
@@ -71,9 +112,9 @@ function churnRisk(score,days){ if(days>60&&score<40) return "Élevé"; if(days>
 function Badge({children,color=C.teal,dot}){return<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 8px",borderRadius:10,fontSize:10,fontWeight:700,background:color+"18",color,textTransform:"uppercase",letterSpacing:"0.03em"}}>{dot&&<span style={{width:5,height:5,borderRadius:"50%",background:color,flexShrink:0}}/>}{children}</span>}
 function Btn({children,onClick,color=C.navy,variant="solid",small,disabled,style:sx,icon}){const s=variant==="solid";return<button onClick={onClick} disabled={disabled} style={{display:"inline-flex",alignItems:"center",gap:6,padding:small?"5px 10px":"9px 16px",borderRadius:8,border:s?"none":"1px solid "+color+"40",cursor:disabled?"not-allowed":"pointer",background:s?color:"transparent",color:s?"#fff":color,fontSize:small?11:12,fontWeight:600,fontFamily:"inherit",opacity:disabled?.5:1,...sx}}>{icon&&<span>{icon}</span>}{children}</button>}
 function Input({label,value,onChange,type="text",placeholder,rows,options,disabled}){const b={padding:"8px 12px",borderRadius:8,border:"1px solid "+C.border,fontSize:13,fontFamily:"inherit",background:disabled?C.bg:C.surface,color:C.text,outline:"none",width:"100%",boxSizing:"border-box"};return<div style={{marginBottom:10}}>{label&&<div style={{fontSize:11,fontWeight:600,color:C.text3,marginBottom:4,textTransform:"uppercase",letterSpacing:"0.04em"}}>{label}</div>}{options?<select value={value} onChange={e=>onChange(e.target.value)} disabled={disabled} style={b}>{options.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}</select>:rows?<textarea value={value} onChange={e=>onChange(e.target.value)} rows={rows} placeholder={placeholder} disabled={disabled} style={{...b,resize:"vertical"}}/>:<input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} disabled={disabled} style={b}/>}</div>}
-function Modal({open,onClose,title,children,wide,xwide}){if(!open)return null;return<div style={{position:"fixed",inset:0,zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(15,43,70,0.55)",backdropFilter:"blur(5px)"}} onClick={onClose}><div onClick={e=>e.stopPropagation()} style={{background:C.surface,borderRadius:16,padding:24,width:xwide?960:wide?720:480,maxWidth:"95vw",maxHeight:"90vh",overflow:"auto",boxShadow:"0 24px 80px rgba(15,43,70,0.35)"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}><div style={{fontSize:16,fontWeight:800,color:C.navy}}>{title}</div><button onClick={onClose} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:C.text3,lineHeight:1}}>✕</button></div>{children}</div></div>}
+function Modal({open,onClose,title,children,wide,xwide}){if(!open)return null;return<div style={{position:"fixed",inset:0,zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(15,43,70,0.55)",backdropFilter:"blur(5px)"}} onClick={onClose}><div onClick={e=>e.stopPropagation()} style={{background:C.surface,borderRadius:16,padding:24,width:xwide?960:wide?720:480,maxWidth:"95vw",maxHeight:"90vh",overflow:"auto",boxShadow:"0 24px 80px rgba(15,43,70,0.35)"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}><div style={{fontSize:16,fontWeight:800,color:C.navy}}>{title}</div><button onClick={onClose} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:C.text3,lineHeight:1}}>{Ico.close()}</button></div>{children}</div></div>}
 function Toast({msg,error}){if(!msg)return null;return<div style={{position:"fixed",top:16,right:16,zIndex:300,padding:"11px 20px",borderRadius:10,background:error?C.red:C.green,color:"#fff",fontSize:13,fontWeight:600,boxShadow:"0 4px 24px rgba(0,0,0,0.25)",display:"flex",alignItems:"center",gap:8}}>{error?"❌":"✓"} {msg}</div>}
-function Stat({icon,value,label,color=C.navy,sub,trend}){return<div style={{padding:"14px 16px",borderRadius:12,background:C.surface,border:"1px solid "+C.border}}><div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:20}}>{icon}</span>{trend!==undefined&&<span style={{fontSize:10,fontWeight:700,color:trend>=0?C.green:C.red}}>{trend>=0?"+":""}{trend}%</span>}</div><div style={{fontSize:22,fontWeight:800,color,fontFamily:"'JetBrains Mono',monospace"}}>{value??"—"}</div><div style={{fontSize:10,color:C.text3,textTransform:"uppercase",letterSpacing:"0.04em",marginTop:2}}>{label}</div>{sub&&<div style={{fontSize:11,color:C.text2,marginTop:3}}>{sub}</div>}</div>}
+function Stat({icon,value,label,color=C.navy,sub,trend}){return<div style={{padding:"14px 16px",borderRadius:R.md,background:C.surface,border:"1px solid "+C.border,boxShadow:SH.sm}}><div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}><span style={{width:32,height:32,borderRadius:R.sm,background:color+"15",color,display:"inline-flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{icon}</span>{trend!==undefined&&<span style={{fontSize:10,fontWeight:700,color:trend>=0?C.green:C.red}}>{trend>=0?"+":""}{trend}%</span>}</div><div style={{fontSize:22,fontWeight:700,color:C.navy,fontFamily:F.mono,letterSpacing:"-0.5px"}}>{value??"—"}</div><div style={{fontSize:10,fontWeight:600,color:C.text3,textTransform:"uppercase",letterSpacing:"0.04em",marginTop:2}}>{label}</div>{sub&&<div style={{fontSize:11,color:C.text2,marginTop:3}}>{sub}</div>}</div>}
 function DT({columns,data,onEdit,onDelete,loading,empty,onRowClick,pageSize=50}){
   const[pg,setPg]=useState(0);
   const total=data?.length||0;const pages=Math.ceil(total/pageSize);const slice=(data||[]).slice(pg*pageSize,(pg+1)*pageSize);
@@ -83,7 +124,7 @@ function DT({columns,data,onEdit,onDelete,loading,empty,onRowClick,pageSize=50})
     <div style={{overflowX:"auto",borderRadius:10,border:"1px solid "+C.border}}>
       <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
         <thead><tr style={{background:C.navy}}>{columns.map((c,i)=><th key={i} style={{padding:"10px 14px",color:"#fff",fontWeight:600,textAlign:"left",fontSize:11,textTransform:"uppercase",whiteSpace:"nowrap",letterSpacing:"0.04em"}}>{c.label}</th>)}{(onEdit||onDelete)&&<th style={{padding:"10px 14px",color:"#fff",textAlign:"right",fontSize:11,width:90}}>Actions</th>}</tr></thead>
-        <tbody>{slice.map((row,ri)=><tr key={row.id||ri} onClick={onRowClick?()=>onRowClick(row):undefined} style={{borderBottom:"1px solid "+C.border,background:ri%2?C.bg:C.surface,cursor:onRowClick?"pointer":"default",transition:"background 0.15s"}}>{columns.map((c,ci)=><td key={ci} style={{padding:"9px 12px"}}>{c.render?c.render(row[c.key],row):(row[c.key]??"—")}</td>)}{(onEdit||onDelete)&&<td style={{padding:"8px 12px",textAlign:"right",whiteSpace:"nowrap"}}>{onEdit&&<Btn small variant="outline" color={C.blue} onClick={e=>{e.stopPropagation();onEdit(row)}} style={{marginRight:4}}>✏️</Btn>}{onDelete&&<Btn small variant="outline" color={C.red} onClick={e=>{e.stopPropagation();onDelete(row)}}>🗑</Btn>}</td>}</tr>)}</tbody>
+        <tbody>{slice.map((row,ri)=><tr key={row.id||ri} onClick={onRowClick?()=>onRowClick(row):undefined} style={{borderBottom:"1px solid "+C.border,background:ri%2?C.bg:C.surface,cursor:onRowClick?"pointer":"default",transition:"background 0.15s"}}>{columns.map((c,ci)=><td key={ci} style={{padding:"9px 12px"}}>{c.render?c.render(row[c.key],row):(row[c.key]??"—")}</td>)}{(onEdit||onDelete)&&<td style={{padding:"8px 12px",textAlign:"right",whiteSpace:"nowrap"}}>{onEdit&&<Btn small variant="outline" color={C.blue} onClick={e=>{e.stopPropagation();onEdit(row)}} style={{marginRight:4}}>{Ico.edit()}</Btn>}{onDelete&&<Btn small variant="outline" color={C.red} onClick={e=>{e.stopPropagation();onDelete(row)}}>{Ico.trash()}</Btn>}</td>}</tr>)}</tbody>
       </table>
     </div>
     {pages>1&&<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 12px",fontSize:12,color:C.text3,borderTop:"1px solid "+C.border}}>
@@ -95,7 +136,7 @@ function DT({columns,data,onEdit,onDelete,loading,empty,onRowClick,pageSize=50})
     </div>}
   </div>
 }
-function ConfirmModal({open,onClose,onConfirm,title,message,confirmLabel="Supprimer",confirmColor=C.red,icon="⚠️"}){if(!open)return null;return<div style={{position:"fixed",inset:0,zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(15,43,70,0.6)",backdropFilter:"blur(6px)"}} onClick={onClose}><div onClick={e=>e.stopPropagation()} style={{background:C.surface,borderRadius:20,padding:0,width:380,maxWidth:"90vw",boxShadow:"0 24px 80px rgba(15,43,70,0.35)",overflow:"hidden"}}><div style={{padding:"24px 24px 0",textAlign:"center"}}><div style={{width:56,height:56,borderRadius:28,background:confirmColor+"15",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:12}}>{icon}</div><div style={{fontSize:17,fontWeight:800,color:C.navy,marginBottom:6}}>{title||"Confirmer"}</div><div style={{fontSize:13,color:C.text2,lineHeight:1.5}}>{message}</div></div><div style={{display:"flex",gap:10,padding:"20px 24px 24px",marginTop:8}}><button onClick={onClose} style={{flex:1,padding:"11px 0",borderRadius:10,border:"1px solid "+C.border,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Annuler</button><button onClick={onConfirm} style={{flex:1,padding:"11px 0",borderRadius:10,border:"none",background:confirmColor,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{confirmLabel}</button></div></div></div>}
+function ConfirmModal({open,onClose,onConfirm,title,message,confirmLabel="Supprimer",confirmColor=C.red,icon=Ico.alert(28)}){if(!open)return null;return<div style={{position:"fixed",inset:0,zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(15,43,70,0.6)",backdropFilter:"blur(6px)"}} onClick={onClose}><div onClick={e=>e.stopPropagation()} style={{background:C.surface,borderRadius:20,padding:0,width:380,maxWidth:"90vw",boxShadow:"0 24px 80px rgba(15,43,70,0.35)",overflow:"hidden"}}><div style={{padding:"24px 24px 0",textAlign:"center"}}><div style={{width:56,height:56,borderRadius:28,background:confirmColor+"15",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:12}}>{icon}</div><div style={{fontSize:17,fontWeight:800,color:C.navy,marginBottom:6}}>{title||"Confirmer"}</div><div style={{fontSize:13,color:C.text2,lineHeight:1.5}}>{message}</div></div><div style={{display:"flex",gap:10,padding:"20px 24px 24px",marginTop:8}}><button onClick={onClose} style={{flex:1,padding:"11px 0",borderRadius:10,border:"1px solid "+C.border,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Annuler</button><button onClick={onConfirm} style={{flex:1,padding:"11px 0",borderRadius:10,border:"none",background:confirmColor,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{confirmLabel}</button></div></div></div>}
 function HealthBar({score}){const{l,c}=healthLabel(score);return<div style={{display:"flex",alignItems:"center",gap:6}}><div style={{flex:1,height:5,borderRadius:3,background:C.border,overflow:"hidden"}}><div style={{width:score+"%",height:"100%",background:c,borderRadius:3,transition:"width 0.4s"}}/></div><span style={{fontSize:11,fontWeight:700,color:c,minWidth:28}}>{score}</span></div>}
 function TabBar({tabs,active,onChange}){return<div style={{display:"flex",gap:2,borderBottom:"2px solid "+C.border,marginBottom:20}}>{tabs.map(t=><button key={t.id} onClick={()=>onChange(t.id)} style={{padding:"10px 16px",border:"none",background:"none",fontFamily:"inherit",fontSize:13,fontWeight:active===t.id?700:500,color:active===t.id?C.teal:C.text3,borderBottom:active===t.id?"2px solid "+C.teal:"2px solid transparent",marginBottom:-2,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>{t.icon&&<span>{t.icon}</span>}{t.label}{t.count!==undefined&&<span style={{background:active===t.id?C.teal+"20":C.bg,color:active===t.id?C.teal:C.text3,borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{t.count}</span>}</button>)}</div>}
 function AlertBanner({alerts}){if(!alerts?.length)return null;return<div style={{background:C.red+"08",border:"1px solid "+C.red+"25",borderRadius:10,padding:"10px 16px",marginBottom:16}}><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:alerts.length>1?8:0}}><span style={{fontSize:16}}>🔔</span><span style={{fontWeight:700,color:C.red,fontSize:13}}>{alerts.length} alerte{alerts.length>1?"s":""} active{alerts.length>1?"s":""}</span></div>{alerts.slice(0,3).map((a,i)=><div key={i} style={{fontSize:12,color:C.text2,padding:"3px 0 3px 26px",borderTop:i?"1px solid "+C.border+"80":"none"}}>{a.icon} {a.message}</div>)}</div>}
@@ -148,14 +189,14 @@ function DashboardSaaS({onNavigate}){
 
     {/* KPIs principaux */}
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,marginBottom:20}}>
-      <Stat icon="💰" value={l?"…":fk(mrr)+"/mois"} label="MRR estimé" color={C.gold} sub={fk(arr)+"/an ARR"}/>
-      <Stat icon="🏢" value={l?"…":active.length} label="Clients actifs" color={C.green}/>
-      <Stat icon="⏳" value={l?"…":trial.length} label="En trial" color={C.amber}/>
-      <Stat icon="⚠️" value={l?"…":atRisk} label="Churn risk" color={C.red}/>
-      <Stat icon="👤" value={l?"…":users.length} label="Utilisateurs" color={C.teal}/>
-      <Stat icon="📊" value={l?"…":fmt(stats.total_simulations)} label="Simulations" color={C.purple}/>
-      <Stat icon="💰" value={l?"…":fk(Number(stats.pipeline_montant)||0)} label="Pipeline" color={C.navy}/>
-      <Stat icon="📁" value={l?"…":fmt(stats.total_prospects)} label="Prospects" color={C.blue}/>
+      <Stat icon={Ico.euro(20)} value={l?"…":fk(mrr)+"/mois"} label="MRR estimé" color={C.gold} sub={fk(arr)+"/an ARR"}/>
+      <Stat icon={Ico.building(20)} value={l?"…":active.length} label="Clients actifs" color={C.green}/>
+      <Stat icon={Ico.clock(20)} value={l?"…":trial.length} label="En trial" color={C.amber}/>
+      <Stat icon={Ico.alert(20)} value={l?"…":atRisk} label="Churn risk" color={C.red}/>
+      <Stat icon={Ico.user(20)} value={l?"…":users.length} label="Utilisateurs" color={C.teal}/>
+      <Stat icon={Ico.chart(20)} value={l?"…":fmt(stats.total_simulations)} label="Simulations" color={C.purple}/>
+      <Stat icon={Ico.euro(20)} value={l?"…":fk(Number(stats.pipeline_montant)||0)} label="Pipeline" color={C.navy}/>
+      <Stat icon={Ico.star(20)} value={l?"…":fmt(stats.total_prospects)} label="Prospects" color={C.blue}/>
     </div>
 
     <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:16,marginBottom:20}}>
@@ -206,7 +247,7 @@ function DashboardSaaS({onNavigate}){
 
     {/* Clients inactifs */}
     {inactive30>0&&<Card style={{borderColor:C.amber+"40",background:C.amber+"05"}}>
-      <div style={{fontWeight:700,fontSize:13,color:C.amber,marginBottom:10}}>💤 Clients inactifs +30 jours</div>
+      <div style={{fontWeight:700,fontSize:13,color:C.amber,marginBottom:10}}>{Ico.sleep()} Clients inactifs +30 jours</div>
       <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
         {withScores.filter(t=>t.days>30&&t.actif).map(t=><div key={t.id} onClick={()=>onNavigate("tenants",t)} style={{padding:"6px 12px",borderRadius:8,background:C.surface,border:"1px solid "+C.amber+"30",cursor:"pointer",fontSize:12}}>
           <span style={{fontWeight:600,color:C.navy}}>{t.nom}</span>
@@ -293,12 +334,12 @@ function TenantDetail({tenant,onBack,allUsers,onRefresh}){
     {/* ── OVERVIEW ── */}
     {tab==="overview"&&<div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,marginBottom:20}}>
-        <Stat icon="💰" value={fk(mrr)+"/mois"} label="MRR" color={C.gold}/>
-        <Stat icon="👤" value={tu.length} label="Utilisateurs" color={C.teal}/>
-        <Stat icon="📊" value={fmt(simTotal)} label="Simulations" color={C.purple}/>
-        <Stat icon="⚡" value={score+"/100"} label="Health score" color={hc}/>
-        <Stat icon="⏱" value={daysAgo(tenant.updated_at||tenant.created_at)+"j"} label="Dernière activité" color={C.text2}/>
-        <Stat icon="📅" value={fd(tenant.created_at)} label="Client depuis" color={C.navy}/>
+        <Stat icon={Ico.euro(20)} value={fk(mrr)+"/mois"} label="MRR" color={C.gold}/>
+        <Stat icon={Ico.user(20)} value={tu.length} label="Utilisateurs" color={C.teal}/>
+        <Stat icon={Ico.chart(20)} value={fmt(simTotal)} label="Simulations" color={C.purple}/>
+        <Stat icon={Ico.zap(20)} value={score+"/100"} label="Health score" color={hc}/>
+        <Stat icon={Ico.star(20)} value={daysAgo(tenant.updated_at||tenant.created_at)+"j"} label="Dernière activité" color={C.text2}/>
+        <Stat icon={Ico.star(20)} value={fd(tenant.created_at)} label="Client depuis" color={C.navy}/>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
         <Card>
@@ -349,10 +390,10 @@ function TenantDetail({tenant,onBack,allUsers,onRefresh}){
     {/* ── USAGE ── */}
     {tab==="usage"&&<div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,marginBottom:20}}>
-        <Stat icon="📊" value={simTotal} label="Simulations total" color={C.purple}/>
-        <Stat icon="👤" value={tu.filter(u=>u.actif).length} label="Users actifs" color={C.teal}/>
-        <Stat icon="📄" value="—" label="Exports PDF" color={C.blue}/>
-        <Stat icon="💶" value="—" label="Volume financé simulé" color={C.gold}/>
+        <Stat icon={Ico.chart(20)} value={simTotal} label="Simulations total" color={C.purple}/>
+        <Stat icon={Ico.user(20)} value={tu.filter(u=>u.actif).length} label="Users actifs" color={C.teal}/>
+        <Stat icon={Ico.doc(20)} value="—" label="Exports PDF" color={C.blue}/>
+        <Stat icon={Ico.star(20)} value="—" label="Volume financé simulé" color={C.gold}/>
       </div>
       <Card>
         <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>Simulations par utilisateur</div>
@@ -446,9 +487,9 @@ function TenantDetail({tenant,onBack,allUsers,onRefresh}){
     {tab==="support"&&<div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
         <Card>
-          <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>🎭 Impersonation</div>
+          <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>{Ico.mask()} Impersonation</div>
           <p style={{fontSize:13,color:C.text2,marginBottom:12}}>Accédez au compte client en mode lecture pour diagnostiquer un problème. Toutes les actions sont loggées.</p>
-          <div style={{padding:10,borderRadius:8,background:C.red+"08",border:"1px solid "+C.red+"20",fontSize:12,color:C.red,marginBottom:12}}>⚠️ L'impersonation est tracée et auditée.</div>
+          <div style={{padding:10,borderRadius:8,background:C.red+"08",border:"1px solid "+C.red+"20",fontSize:12,color:C.red,marginBottom:12}}>{Ico.alert()} L'impersonation est tracée et auditée.</div>
           <Btn color={C.purple} icon="🎭" onClick={()=>{
             if(!tenant.slug){toast("Slug manquant pour ce client",true);return;}
             // window.open AVANT tout await — sinon le navigateur bloque le popup
@@ -460,7 +501,7 @@ function TenantDetail({tenant,onBack,allUsers,onRefresh}){
           </Btn>
         </Card>
         <Card>
-          <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>🔗 Liens rapides</div>
+          <div style={{fontWeight:700,color:C.navy,marginBottom:12,fontSize:13}}>{Ico.link()} Liens rapides</div>
           {[
             {l:"Simulateur client",url:"https://app.lihtea.com?t="+tenant.slug,icon:"🌐"},
             {l:"Admin client",url:"https://admin.lihtea.com?t="+tenant.slug,icon:"⚙️"},
@@ -514,7 +555,7 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
   return<div>
     <Toast msg={toastMsg} error={toastErr}/>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-      <SectionTitle sub={`${tenants.length} clients · ${tenants.filter(t=>t.actif).length} actifs`}>🏢 Clients</SectionTitle>
+      <SectionTitle sub={`${tenants.length} clients · ${tenants.filter(t=>t.actif).length} actifs`}>{Ico.building()} Clients</SectionTitle>
       <Btn color={C.teal} icon="+" onClick={()=>{sF({nom:"",slug:"",email:"",password:"",plan:"starter",email_support:""});sM("new")}}>Nouveau client</Btn>
     </div>
 
@@ -530,11 +571,11 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
 
     {/* Stats rapides */}
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:10,marginBottom:16}}>
-      <Stat icon="🏢" value={tenants.length} label="Total" color={C.navy}/>
-      <Stat icon="✅" value={tenants.filter(t=>t.actif).length} label="Actifs" color={C.green}/>
-      <Stat icon="⚠️" value={withScores.filter(t=>t.score<40&&t.actif).length} label="À risque" color={C.red}/>
-      <Stat icon="🥇" value={tenants.filter(t=>t.plan==="enterprise").length} label="Enterprise" color={C.gold}/>
-      <Stat icon="💰" value={fk(tenants.filter(t=>t.actif).reduce((s,t)=>s+(PLAN_PRICE[t.plan]||149),0))+"/mois"} label="MRR" color={C.teal}/>
+      <Stat icon={Ico.building(20)} value={tenants.length} label="Total" color={C.navy}/>
+      <Stat icon={Ico.check(20)} value={tenants.filter(t=>t.actif).length} label="Actifs" color={C.green}/>
+      <Stat icon={Ico.alert(20)} value={withScores.filter(t=>t.score<40&&t.actif).length} label="À risque" color={C.red}/>
+      <Stat icon={Ico.trophy(20)} value={tenants.filter(t=>t.plan==="enterprise").length} label="Enterprise" color={C.gold}/>
+      <Stat icon={Ico.euro(20)} value={fk(tenants.filter(t=>t.actif).reduce((s,t)=>s+(PLAN_PRICE[t.plan]||149),0))+"/mois"} label="MRR" color={C.teal}/>
     </div>
 
     {/* Tableau enrichi */}
@@ -551,7 +592,7 @@ function Tenants({initialAction,allUsers,onSelectTenant}){
       {key:"score",label:"Health",render:(v,r)=><div style={{minWidth:100}}><HealthBar score={v}/></div>},
       {key:"created_at",label:"Client depuis",render:v=><span style={{fontSize:11,color:C.text3}}>{fd(v)}</span>},
       {key:"id",label:"Actions",render:(v,r)=><div style={{display:"flex",gap:4,flexWrap:"wrap"}} onClick={e=>e.stopPropagation()}>
-        <Btn small variant="outline" color={C.blue} onClick={()=>onSelectTenant(r)}>🔍 Détail</Btn>
+        <Btn small variant="outline" color={C.blue} onClick={()=>onSelectTenant(r)}>{Ico.search()} Détail</Btn>
         <Btn small variant="outline" color={C.purple} onClick={()=>{if(!r.slug)return;window.open("https://app.lihtea.com?t="+r.slug+"&_sa_impersonate=1","_blank");fjA(ADM+"/audit-logs",{method:"POST",body:JSON.stringify({action:"impersonate",details:`Impersonation tenant : ${r.nom} (${r.slug})`,tenant_id:r.id})});}}>🎭</Btn>
         <Btn small variant="outline" color={r.actif?C.red:C.green} onClick={()=>sConf(r)}>{r.actif?"⏸":"▶"}</Btn>
       </div>},
@@ -599,18 +640,18 @@ function Analytics({tenants,users}){
   const simTotal=withScores.reduce((s,t)=>s+t.simCount,0);
 
   return<div>
-    <SectionTitle sub="Adoption, usage et performance par client">📈 Analytics</SectionTitle>
+    <SectionTitle sub="Adoption, usage et performance par client">{Ico.trend()} Analytics</SectionTitle>
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,marginBottom:20}}>
-      <Stat icon="🚀" value={adopRate+"%"} label="Taux d'adoption" color={C.green}/>
-      <Stat icon="📊" value={simTotal} label="Simulations total" color={C.purple}/>
-      <Stat icon="👤" value={users.length} label="Utilisateurs total" color={C.teal}/>
-      <Stat icon="💤" value={inactive.length} label="Inactifs +30j" color={C.amber}/>
-      <Stat icon="⚠️" value={withScores.filter(t=>t.score<40&&t.actif).length} label="Churn risk" color={C.red}/>
+      <Stat icon={Ico.rocket(20)} value={adopRate+"%"} label="Taux d'adoption" color={C.green}/>
+      <Stat icon={Ico.chart(20)} value={simTotal} label="Simulations total" color={C.purple}/>
+      <Stat icon={Ico.user(20)} value={users.length} label="Utilisateurs total" color={C.teal}/>
+      <Stat icon={Ico.sleep(20)} value={inactive.length} label="Inactifs +30j" color={C.amber}/>
+      <Stat icon={Ico.alert(20)} value={withScores.filter(t=>t.score<40&&t.actif).length} label="Churn risk" color={C.red}/>
     </div>
 
     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
       <Card>
-        <div style={{fontWeight:700,color:C.navy,marginBottom:14,fontSize:13}}>🏆 Top clients — Simulations</div>
+        <div style={{fontWeight:700,color:C.navy,marginBottom:14,fontSize:13}}>{Ico.trophy()} Top clients — Simulations</div>
         {top.length===0?<EmptyState icon="📊" title="Pas de données" sub="Données insuffisantes"/>:
         top.map((t,i)=><div key={t.id} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:"1px solid "+C.border+"60"}}>
           <span style={{fontSize:15,minWidth:24,textAlign:"center"}}>{["🥇","🥈","🥉","4️⃣","5️⃣"][i]}</span>
@@ -625,7 +666,7 @@ function Analytics({tenants,users}){
       </Card>
 
       <Card>
-        <div style={{fontWeight:700,color:C.navy,marginBottom:14,fontSize:13}}>💤 Clients inactifs</div>
+        <div style={{fontWeight:700,color:C.navy,marginBottom:14,fontSize:13}}>{Ico.sleep()} Clients inactifs</div>
         {inactive.length===0?<div style={{padding:20,textAlign:"center",color:C.green,fontSize:13}}>✓ Tous les clients sont actifs</div>:
         inactive.map(t=><div key={t.id} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:"1px solid "+C.border+"60"}}>
           <Badge color={C.amber}>+{daysAgo(t.updated_at||t.created_at)}j</Badge>
@@ -686,7 +727,7 @@ function Alertes({tenants,users}){
   const warning=alerts.filter(a=>a.level==="warning");
 
   return<div>
-    <SectionTitle sub={`${alerts.length} alerte${alerts.length>1?"s":""} active${alerts.length>1?"s":""}`}>🔔 Alertes système</SectionTitle>
+    <SectionTitle sub={`${alerts.length} alerte${alerts.length>1?"s":""} active${alerts.length>1?"s":""}`}>{Ico.bell()} Alertes système</SectionTitle>
     {alerts.length===0?<EmptyState icon="✅" title="Aucune alerte" sub="La plateforme est en bonne santé"/>:<>
     {critical.length>0&&<div style={{marginBottom:16}}>
       <div style={{fontSize:12,fontWeight:700,color:C.red,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:8}}>🔴 Critique — {critical.length} alerte{critical.length>1?"s":""}</div>
@@ -765,7 +806,7 @@ function AuditLogs(){
   const filtered=logs.filter(l=>(!tenantF||l.tenant_id===tenantF)&&(!actionF||l.action===actionF));
   const ACTION_COLOR={create:C.green,update:C.blue,delete:C.red,login:C.teal,export:C.purple,impersonate:C.orange};
   return<div>
-    <SectionTitle sub={`${logs.length} événements tracés`}>📋 Audit Trail</SectionTitle>
+    <SectionTitle sub={`${logs.length} événements tracés`}>{Ico.clipboard()} Audit Trail</SectionTitle>
     <div style={{display:"flex",gap:10,marginBottom:16}}>
       <select value={actionF} onChange={e=>setAF(e.target.value)} style={{padding:"8px 12px",borderRadius:8,border:"1px solid "+C.border,fontSize:12,fontFamily:"inherit"}}>
         <option value="">Toutes les actions</option>
@@ -794,17 +835,17 @@ function UsersGlobal(){
   const filtered=tf?users.filter(u=>u.tenant_id===tf):users;
   return<div>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
-      <SectionTitle sub={`${filtered.length} comptes · ${tenants.length} clients`}>👤 Tous les utilisateurs</SectionTitle>
+      <SectionTitle sub={`${filtered.length} comptes · ${tenants.length} clients`}>{Ico.user()} Tous les utilisateurs</SectionTitle>
       <select value={tf} onChange={e=>sTF(e.target.value)} style={{padding:"8px 12px",borderRadius:8,border:"1px solid "+C.border,fontSize:12,fontFamily:"inherit"}}>
         <option value="">Tous les clients</option>
         {tenants.map(t=><option key={t.id} value={t.id}>{t.nom}</option>)}
       </select>
     </div>
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:10,marginBottom:16}}>
-      <Stat icon="👤" value={filtered.length} label="Utilisateurs" color={C.navy}/>
-      <Stat icon="✅" value={filtered.filter(u=>u.actif).length} label="Actifs" color={C.green}/>
-      <Stat icon="📊" value={filtered.reduce((a,u)=>a+(u.total_simulations||0),0)} label="Simulations" color={C.purple}/>
-      <Stat icon="👑" value={filtered.filter(u=>u.role==="admin").length} label="Admins" color={C.gold}/>
+      <Stat icon={Ico.user(20)} value={filtered.length} label="Utilisateurs" color={C.navy}/>
+      <Stat icon={Ico.check(20)} value={filtered.filter(u=>u.actif).length} label="Actifs" color={C.green}/>
+      <Stat icon={Ico.chart(20)} value={filtered.reduce((a,u)=>a+(u.total_simulations||0),0)} label="Simulations" color={C.purple}/>
+      <Stat icon={Ico.star(20)} value={filtered.filter(u=>u.role==="admin").length} label="Admins" color={C.gold}/>
     </div>
     <DT loading={loading} data={filtered} columns={[
       {key:"prenom",label:"Utilisateur",render:(v,r)=><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:28,height:28,borderRadius:14,background:r.actif?C.teal:C.text3,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:10,fontWeight:700}}>{(r.prenom?.[0]||"")+(r.nom?.[0]||"?")}</div><div><div style={{fontWeight:600}}>{v} {r.nom}</div><div style={{fontSize:10,color:C.text3}}>{r.email}</div></div></div>},
@@ -818,19 +859,19 @@ function UsersGlobal(){
 }
 
 // ─── CATALOGUE (inchangé, compact) ───────────────────────────────────────────
-function Organismes(){const{data,loading,create,update,remove}=useCrud("organismes");const[m,sM]=useState(null);const{toastMsg,toastErr,toast}=useToast();const[f,sF]=useState({});const[del,sDel]=useState(null);const F=(k,v)=>sF(p=>({...p,[k]:v}));return<div><Toast msg={toastMsg} error={toastErr}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><SectionTitle sub={data.length+" organismes"}>🏛️ Organismes</SectionTitle><Btn onClick={()=>{sF({nom:"",sigle:"",type:"national",pays:"FR",couleur:"#0d9488",actif:true});sM("new")}} color={C.teal}>+ Ajouter</Btn></div><DT loading={loading} data={data} onEdit={r=>{sF({...r});sM("edit")}} onDelete={r=>sDel(r)} columns={[{key:"sigle",label:"Sigle",render:(v,r)=><span style={{fontWeight:700,color:r.couleur}}>{v}</span>},{key:"nom",label:"Nom"},{key:"type",label:"Type",render:v=><Badge color={{national:C.teal,europeen:C.purple,regional:"#7e22ce",fiscal:C.gold}[v]}>{v}</Badge>},{key:"actif",label:"",render:v=>v?"✅":"❌"}]}/><Modal open={!!m} onClose={()=>sM(null)} title={m==="new"?"Nouvel organisme":"Modifier"}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 12px"}}><Input label="Sigle*" value={f.sigle||""} onChange={v=>F("sigle",v)}/><Input label="Nom*" value={f.nom||""} onChange={v=>F("nom",v)}/><Input label="Type" value={f.type||"national"} onChange={v=>F("type",v)} options={[{value:"national",label:"National"},{value:"europeen",label:"Européen"},{value:"regional",label:"Régional"},{value:"fiscal",label:"Fiscal"}]}/><Input label="Couleur" value={f.couleur||""} onChange={v=>F("couleur",v)} type="color"/></div><Input label="Description" value={f.description||""} onChange={v=>F("description",v)} rows={2}/><div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8}}><Btn variant="outline" onClick={()=>sM(null)}>Annuler</Btn><Btn color={C.teal} onClick={async()=>{if(m==="new"?await create(f):await update(f.id,f)){toast("✓ Sauvegardé");sM(null)}}}>{m==="new"?"Créer":"Sauvegarder"}</Btn></div></Modal><ConfirmModal open={!!del} onClose={()=>sDel(null)} title="Désactiver ?" message={del?`"${del.sigle}" ?`:""} icon="🏛️" confirmLabel="Désactiver" confirmColor={C.orange} onConfirm={async()=>{await remove(del.id);toast("✓");sDel(null)}}/></div>}
+function Organismes(){const{data,loading,create,update,remove}=useCrud("organismes");const[m,sM]=useState(null);const{toastMsg,toastErr,toast}=useToast();const[f,sF]=useState({});const[del,sDel]=useState(null);const F=(k,v)=>sF(p=>({...p,[k]:v}));return<div><Toast msg={toastMsg} error={toastErr}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><SectionTitle sub={data.length+" organismes"}>{Ico.landmark()} Organismes</SectionTitle><Btn onClick={()=>{sF({nom:"",sigle:"",type:"national",pays:"FR",couleur:"#0d9488",actif:true});sM("new")}} color={C.teal}>+ Ajouter</Btn></div><DT loading={loading} data={data} onEdit={r=>{sF({...r});sM("edit")}} onDelete={r=>sDel(r)} columns={[{key:"sigle",label:"Sigle",render:(v,r)=><span style={{fontWeight:700,color:r.couleur}}>{v}</span>},{key:"nom",label:"Nom"},{key:"type",label:"Type",render:v=><Badge color={{national:C.teal,europeen:C.purple,regional:"#7e22ce",fiscal:C.gold}[v]}>{v}</Badge>},{key:"actif",label:"",render:v=>v?"✅":"❌"}]}/><Modal open={!!m} onClose={()=>sM(null)} title={m==="new"?"Nouvel organisme":"Modifier"}><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 12px"}}><Input label="Sigle*" value={f.sigle||""} onChange={v=>F("sigle",v)}/><Input label="Nom*" value={f.nom||""} onChange={v=>F("nom",v)}/><Input label="Type" value={f.type||"national"} onChange={v=>F("type",v)} options={[{value:"national",label:"National"},{value:"europeen",label:"Européen"},{value:"regional",label:"Régional"},{value:"fiscal",label:"Fiscal"}]}/><Input label="Couleur" value={f.couleur||""} onChange={v=>F("couleur",v)} type="color"/></div><Input label="Description" value={f.description||""} onChange={v=>F("description",v)} rows={2}/><div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8}}><Btn variant="outline" onClick={()=>sM(null)}>Annuler</Btn><Btn color={C.teal} onClick={async()=>{if(m==="new"?await create(f):await update(f.id,f)){toast("✓ Sauvegardé");sM(null)}}}>{m==="new"?"Créer":"Sauvegarder"}</Btn></div></Modal><ConfirmModal open={!!del} onClose={()=>sDel(null)} title="Désactiver ?" message={del?`"${del.sigle}" ?`:""} icon="🏛️" confirmLabel="Désactiver" confirmColor={C.orange} onConfirm={async()=>{await remove(del.id);toast("✓");sDel(null)}}/></div>}
 
-function Dispositifs(){const{data,loading,create,update,remove}=useCrud("dispositifs");const[orgs,sO]=useState([]);const[m,sM]=useState(null);const{toastMsg,toastErr,toast}=useToast();const[f,sF]=useState({});const[del,sDel]=useState(null);const F=(k,v)=>sF(p=>({...p,[k]:v}));useEffect(()=>{fjA(ADM+"/organismes").then(r=>sO(r?.data||[]))},[]);return<div><Toast msg={toastMsg} error={toastErr}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><SectionTitle sub={data.length+" dispositifs"}>📋 Dispositifs</SectionTitle><Btn onClick={()=>{sF({nom:"",code:"",type_aide:"subvention",taux_min:0,taux_max:50,statut:"actif",organisme_id:orgs[0]?.id});sM("new")}} color={C.teal}>+ Ajouter</Btn></div><DT loading={loading} data={data} onEdit={r=>{sF({...r});sM("edit")}} onDelete={r=>sDel(r)} columns={[{key:"code",label:"Code",render:v=><span style={{fontFamily:"monospace",fontSize:11,fontWeight:600}}>{v}</span>},{key:"nom",label:"Nom"},{key:"organisme_id",label:"Org.",render:v=><Badge color={C.navy}>{orgs.find(o=>o.id===v)?.sigle||"?"}</Badge>},{key:"type_aide",label:"Type",render:v=><Badge color={C.teal}>{v?.replace("_"," ")}</Badge>},{key:"taux_max",label:"Taux",render:(v,r)=>v?r.taux_min+"-"+v+"%":"—"},{key:"statut",label:"",render:v=><Badge color={v==="actif"?C.green:C.red}>{v}</Badge>}]}/><Modal open={!!m} onClose={()=>sM(null)} title={m==="new"?"Nouveau":"Modifier"} wide><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0 12px"}}><Input label="Code*" value={f.code||""} onChange={v=>F("code",v)}/><Input label="Nom*" value={f.nom||""} onChange={v=>F("nom",v)}/><Input label="Organisme" value={f.organisme_id||""} onChange={v=>F("organisme_id",v)} options={orgs.map(o=>({value:o.id,label:o.sigle}))}/><Input label="Type" value={f.type_aide||"subvention"} onChange={v=>F("type_aide",v)} options={["subvention","pret","credit_impot","prime","garantie","reduction_taux"].map(v=>({value:v,label:v.replace("_"," ")}))}/><Input label="Min%" value={f.taux_min??0} onChange={v=>F("taux_min",parseFloat(v)||0)} type="number"/><Input label="Max%" value={f.taux_max??0} onChange={v=>F("taux_max",parseFloat(v)||0)} type="number"/></div><div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8}}><Btn variant="outline" onClick={()=>sM(null)}>Annuler</Btn><Btn color={C.teal} onClick={async()=>{if(m==="new"?await create(f):await update(f.id,f)){toast("✓");sM(null)}}}>{m==="new"?"Créer":"Sauvegarder"}</Btn></div></Modal><ConfirmModal open={!!del} onClose={()=>sDel(null)} title="Désactiver ?" message={del?`"${del.code}" ?`:""} icon="📋" confirmLabel="Désactiver" confirmColor={C.orange} onConfirm={async()=>{await remove(del.id);toast("✓");sDel(null)}}/></div>}
+function Dispositifs(){const{data,loading,create,update,remove}=useCrud("dispositifs");const[orgs,sO]=useState([]);const[m,sM]=useState(null);const{toastMsg,toastErr,toast}=useToast();const[f,sF]=useState({});const[del,sDel]=useState(null);const F=(k,v)=>sF(p=>({...p,[k]:v}));useEffect(()=>{fjA(ADM+"/organismes").then(r=>sO(r?.data||[]))},[]);return<div><Toast msg={toastMsg} error={toastErr}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><SectionTitle sub={data.length+" dispositifs"}>{Ico.clipboard()} Dispositifs</SectionTitle><Btn onClick={()=>{sF({nom:"",code:"",type_aide:"subvention",taux_min:0,taux_max:50,statut:"actif",organisme_id:orgs[0]?.id});sM("new")}} color={C.teal}>+ Ajouter</Btn></div><DT loading={loading} data={data} onEdit={r=>{sF({...r});sM("edit")}} onDelete={r=>sDel(r)} columns={[{key:"code",label:"Code",render:v=><span style={{fontFamily:"monospace",fontSize:11,fontWeight:600}}>{v}</span>},{key:"nom",label:"Nom"},{key:"organisme_id",label:"Org.",render:v=><Badge color={C.navy}>{orgs.find(o=>o.id===v)?.sigle||"?"}</Badge>},{key:"type_aide",label:"Type",render:v=><Badge color={C.teal}>{v?.replace("_"," ")}</Badge>},{key:"taux_max",label:"Taux",render:(v,r)=>v?r.taux_min+"-"+v+"%":"—"},{key:"statut",label:"",render:v=><Badge color={v==="actif"?C.green:C.red}>{v}</Badge>}]}/><Modal open={!!m} onClose={()=>sM(null)} title={m==="new"?"Nouveau":"Modifier"} wide><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0 12px"}}><Input label="Code*" value={f.code||""} onChange={v=>F("code",v)}/><Input label="Nom*" value={f.nom||""} onChange={v=>F("nom",v)}/><Input label="Organisme" value={f.organisme_id||""} onChange={v=>F("organisme_id",v)} options={orgs.map(o=>({value:o.id,label:o.sigle}))}/><Input label="Type" value={f.type_aide||"subvention"} onChange={v=>F("type_aide",v)} options={["subvention","pret","credit_impot","prime","garantie","reduction_taux"].map(v=>({value:v,label:v.replace("_"," ")}))}/><Input label="Min%" value={f.taux_min??0} onChange={v=>F("taux_min",parseFloat(v)||0)} type="number"/><Input label="Max%" value={f.taux_max??0} onChange={v=>F("taux_max",parseFloat(v)||0)} type="number"/></div><div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8}}><Btn variant="outline" onClick={()=>sM(null)}>Annuler</Btn><Btn color={C.teal} onClick={async()=>{if(m==="new"?await create(f):await update(f.id,f)){toast("✓");sM(null)}}}>{m==="new"?"Créer":"Sauvegarder"}</Btn></div></Modal><ConfirmModal open={!!del} onClose={()=>sDel(null)} title="Désactiver ?" message={del?`"${del.code}" ?`:""} icon="📋" confirmLabel="Désactiver" confirmColor={C.orange} onConfirm={async()=>{await remove(del.id);toast("✓");sDel(null)}}/></div>}
 
-function Equipements(){const{data,loading,create,update,remove}=useCrud("equipements");const[cats,sC]=useState([]);const[fiches,sFC]=useState([]);const[m,sM]=useState(null);const{toastMsg,toastErr,toast}=useToast();const[f,sF]=useState({});const[del,sDel]=useState(null);const F=(k,v)=>sF(p=>({...p,[k]:v}));useEffect(()=>{fjA(ADM+"/categories_equipements").then(r=>sC(r?.data||[]));fjA(ADM+"/fiches_cee").then(r=>sFC(r?.data||[]))},[]);return<div><Toast msg={toastMsg} error={toastErr}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><SectionTitle sub={data.length+" dans le catalogue global"}>🏭 Équipements</SectionTitle><Btn onClick={()=>{sF({libelle:"",code_nomenclature:"",categorie_id:cats[0]?.id,fiche_cee_id:"",gain_energetique_typique:25,actif:true});sM("new")}} color={C.teal}>+ Ajouter</Btn></div><DT loading={loading} data={data} onEdit={r=>{sF({...r});sM("edit")}} onDelete={r=>sDel(r)} columns={[{key:"code_nomenclature",label:"Code",render:v=><span style={{fontFamily:"monospace",fontSize:11}}>{v}</span>},{key:"categorie_id",label:"Cat.",render:v=>{const c=cats.find(x=>x.id===v);return c?c.icone+" "+c.nom:"—"}},{key:"libelle",label:"Équipement",render:v=><span style={{fontWeight:600}}>{v}</span>},{key:"fiche_cee_id",label:"CEE",render:v=>v?<Badge color={C.teal}>{fiches.find(x=>x.id===v)?.code||"?"}</Badge>:""},{key:"gain_energetique_typique",label:"Gain",render:v=>v?<span style={{color:C.green,fontWeight:700}}>{v}%</span>:""},{key:"actif",label:"",render:v=>v?"✅":"❌"}]}/><Modal open={!!m} onClose={()=>sM(null)} title={m==="new"?"Nouveau":"Modifier"} wide><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0 12px"}}><Input label="Code" value={f.code_nomenclature||""} onChange={v=>F("code_nomenclature",v)}/><Input label="Libellé*" value={f.libelle||""} onChange={v=>F("libelle",v)}/><Input label="Catégorie" value={f.categorie_id||""} onChange={v=>F("categorie_id",v)} options={cats.map(c=>({value:c.id,label:(c.icone||"")+" "+c.nom}))}/><Input label="Fiche CEE" value={f.fiche_cee_id||""} onChange={v=>F("fiche_cee_id",v)} options={[{value:"",label:"Aucune"},...fiches.map(x=>({value:x.id,label:x.code}))]}/><Input label="Gain%" value={f.gain_energetique_typique??""} onChange={v=>F("gain_energetique_typique",v?parseFloat(v):null)} type="number"/></div><div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8}}><Btn variant="outline" onClick={()=>sM(null)}>Annuler</Btn><Btn color={C.teal} onClick={async()=>{const p={...f};if(!p.fiche_cee_id)p.fiche_cee_id=null;if(m==="new"?await create(p):await update(p.id,p)){toast("✓");sM(null)}}}>{m==="new"?"Créer":"Sauvegarder"}</Btn></div></Modal><ConfirmModal open={!!del} onClose={()=>sDel(null)} title="Désactiver ?" message={del?`"${del.libelle}" ?`:""} icon="🏭" confirmLabel="Désactiver" confirmColor={C.orange} onConfirm={async()=>{await remove(del.id);toast("✓");sDel(null)}}/></div>}
+function Equipements(){const{data,loading,create,update,remove}=useCrud("equipements");const[cats,sC]=useState([]);const[fiches,sFC]=useState([]);const[m,sM]=useState(null);const{toastMsg,toastErr,toast}=useToast();const[f,sF]=useState({});const[del,sDel]=useState(null);const F=(k,v)=>sF(p=>({...p,[k]:v}));useEffect(()=>{fjA(ADM+"/categories_equipements").then(r=>sC(r?.data||[]));fjA(ADM+"/fiches_cee").then(r=>sFC(r?.data||[]))},[]);return<div><Toast msg={toastMsg} error={toastErr}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><SectionTitle sub={data.length+" dans le catalogue global"}>{Ico.factory()} Équipements</SectionTitle><Btn onClick={()=>{sF({libelle:"",code_nomenclature:"",categorie_id:cats[0]?.id,fiche_cee_id:"",gain_energetique_typique:25,actif:true});sM("new")}} color={C.teal}>+ Ajouter</Btn></div><DT loading={loading} data={data} onEdit={r=>{sF({...r});sM("edit")}} onDelete={r=>sDel(r)} columns={[{key:"code_nomenclature",label:"Code",render:v=><span style={{fontFamily:"monospace",fontSize:11}}>{v}</span>},{key:"categorie_id",label:"Cat.",render:v=>{const c=cats.find(x=>x.id===v);return c?c.icone+" "+c.nom:"—"}},{key:"libelle",label:"Équipement",render:v=><span style={{fontWeight:600}}>{v}</span>},{key:"fiche_cee_id",label:"CEE",render:v=>v?<Badge color={C.teal}>{fiches.find(x=>x.id===v)?.code||"?"}</Badge>:""},{key:"gain_energetique_typique",label:"Gain",render:v=>v?<span style={{color:C.green,fontWeight:700}}>{v}%</span>:""},{key:"actif",label:"",render:v=>v?"✅":"❌"}]}/><Modal open={!!m} onClose={()=>sM(null)} title={m==="new"?"Nouveau":"Modifier"} wide><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0 12px"}}><Input label="Code" value={f.code_nomenclature||""} onChange={v=>F("code_nomenclature",v)}/><Input label="Libellé*" value={f.libelle||""} onChange={v=>F("libelle",v)}/><Input label="Catégorie" value={f.categorie_id||""} onChange={v=>F("categorie_id",v)} options={cats.map(c=>({value:c.id,label:(c.icone||"")+" "+c.nom}))}/><Input label="Fiche CEE" value={f.fiche_cee_id||""} onChange={v=>F("fiche_cee_id",v)} options={[{value:"",label:"Aucune"},...fiches.map(x=>({value:x.id,label:x.code}))]}/><Input label="Gain%" value={f.gain_energetique_typique??""} onChange={v=>F("gain_energetique_typique",v?parseFloat(v):null)} type="number"/></div><div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8}}><Btn variant="outline" onClick={()=>sM(null)}>Annuler</Btn><Btn color={C.teal} onClick={async()=>{const p={...f};if(!p.fiche_cee_id)p.fiche_cee_id=null;if(m==="new"?await create(p):await update(p.id,p)){toast("✓");sM(null)}}}>{m==="new"?"Créer":"Sauvegarder"}</Btn></div></Modal><ConfirmModal open={!!del} onClose={()=>sDel(null)} title="Désactiver ?" message={del?`"${del.libelle}" ?`:""} icon="🏭" confirmLabel="Désactiver" confirmColor={C.orange} onConfirm={async()=>{await remove(del.id);toast("✓");sDel(null)}}/></div>}
 
-function Catalogue(){const[d,sD]=useState([]);const[l,sL]=useState(true);const[f,sF]=useState({o:"",c:""});useEffect(()=>{fj(CAT+"/catalogue").then(r=>{sD(r?.data||[]);sL(false)})},[]);const orgs=[...new Set(d.map(x=>x.organisme_sigle))].sort();const cats=[...new Set(d.map(x=>x.categorie_code).filter(Boolean))].sort();const filtered=d.filter(x=>(!f.o||x.organisme_sigle===f.o)&&(!f.c||x.categorie_code===f.c));return<div><SectionTitle sub={filtered.length+" entrées"}>✅ Éligibilités</SectionTitle><div style={{display:"flex",gap:10,marginBottom:16}}><select value={f.o} onChange={e=>sF(p=>({...p,o:e.target.value}))} style={{padding:"7px 12px",borderRadius:8,border:"1px solid "+C.border,fontSize:12,fontFamily:"inherit"}}><option value="">Tous</option>{orgs.map(o=><option key={o}>{o}</option>)}</select><select value={f.c} onChange={e=>sF(p=>({...p,c:e.target.value}))} style={{padding:"7px 12px",borderRadius:8,border:"1px solid "+C.border,fontSize:12,fontFamily:"inherit"}}><option value="">Toutes</option>{cats.map(c=><option key={c}>{c}</option>)}</select></div><DT loading={l} data={filtered} columns={[{key:"organisme_sigle",label:"Org.",render:(v,r)=><span style={{color:r.organisme_couleur,fontWeight:700}}>{v}</span>},{key:"dispositif_code",label:"Dispositif",render:v=><span style={{fontFamily:"monospace",fontSize:11}}>{v}</span>},{key:"equipement_libelle",label:"Équipement",render:v=><span style={{fontWeight:600}}>{v}</span>},{key:"fiche_cee_code",label:"CEE",render:v=>v?<Badge color={C.teal}>{v}</Badge>:""},{key:"taux_subvention",label:"Taux",render:v=>v?<span style={{color:C.green,fontWeight:700}}>{Number(v)}%</span>:""}]}/></div>}
+function Catalogue(){const[d,sD]=useState([]);const[l,sL]=useState(true);const[f,sF]=useState({o:"",c:""});useEffect(()=>{fj(CAT+"/catalogue").then(r=>{sD(r?.data||[]);sL(false)})},[]);const orgs=[...new Set(d.map(x=>x.organisme_sigle))].sort();const cats=[...new Set(d.map(x=>x.categorie_code).filter(Boolean))].sort();const filtered=d.filter(x=>(!f.o||x.organisme_sigle===f.o)&&(!f.c||x.categorie_code===f.c));return<div><SectionTitle sub={filtered.length+" entrées"}>{Ico.check()} Éligibilités</SectionTitle><div style={{display:"flex",gap:10,marginBottom:16}}><select value={f.o} onChange={e=>sF(p=>({...p,o:e.target.value}))} style={{padding:"7px 12px",borderRadius:8,border:"1px solid "+C.border,fontSize:12,fontFamily:"inherit"}}><option value="">Tous</option>{orgs.map(o=><option key={o}>{o}</option>)}</select><select value={f.c} onChange={e=>sF(p=>({...p,c:e.target.value}))} style={{padding:"7px 12px",borderRadius:8,border:"1px solid "+C.border,fontSize:12,fontFamily:"inherit"}}><option value="">Toutes</option>{cats.map(c=><option key={c}>{c}</option>)}</select></div><DT loading={l} data={filtered} columns={[{key:"organisme_sigle",label:"Org.",render:(v,r)=><span style={{color:r.organisme_couleur,fontWeight:700}}>{v}</span>},{key:"dispositif_code",label:"Dispositif",render:v=><span style={{fontFamily:"monospace",fontSize:11}}>{v}</span>},{key:"equipement_libelle",label:"Équipement",render:v=><span style={{fontWeight:600}}>{v}</span>},{key:"fiche_cee_code",label:"CEE",render:v=>v?<Badge color={C.teal}>{v}</Badge>:""},{key:"taux_subvention",label:"Taux",render:v=>v?<span style={{color:C.green,fontWeight:700}}>{Number(v)}%</span>:""}]}/></div>}
 
 // ─── BAREMES (lecture) ────────────────────────────────────────────────────────
 function BaremesView(){
   const{data,loading}=useCrud("financing_grids");
   return<div>
-    <SectionTitle sub="Barèmes de financement actifs">💳 Barèmes financiers</SectionTitle>
+    <SectionTitle sub="Barèmes de financement actifs">{Ico.card()} Barèmes financiers</SectionTitle>
     <DT loading={loading} data={data} columns={[
       {key:"grid_name",label:"Barème",render:v=><span style={{fontWeight:700,color:C.navy}}>{v}</span>},
       {key:"effective_date",label:"En vigueur depuis",render:v=><span style={{fontSize:12,color:C.text3}}>{fd(v)}</span>},
@@ -901,10 +942,10 @@ function Connecteurs(){
     </div>
 
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,marginBottom:24}}>
-      <Stat icon="🔗" value={CONNECTORS.filter(c=>c.status==="active").length} label="Connecteurs actifs" color={C.green}/>
-      <Stat icon="🔑" value={CONNECTORS.filter(c=>c.keyConfigured).length} label="Clés configurées" color={C.teal}/>
-      <Stat icon="🏛️" value={connectedOrgs.length} label="Organismes connectés" color={C.navy}/>
-      <Stat icon="⚠️" value={CONNECTORS.filter(c=>c.status==="inactive").length} label="Inactifs" color={C.orange}/>
+      <Stat icon={Ico.link(20)} value={CONNECTORS.filter(c=>c.status==="active").length} label="Connecteurs actifs" color={C.green}/>
+      <Stat icon={Ico.star(20)} value={CONNECTORS.filter(c=>c.keyConfigured).length} label="Clés configurées" color={C.teal}/>
+      <Stat icon={Ico.landmark(20)} value={connectedOrgs.length} label="Organismes connectés" color={C.navy}/>
+      <Stat icon={Ico.alert(20)} value={CONNECTORS.filter(c=>c.status==="inactive").length} label="Inactifs" color={C.orange}/>
     </div>
 
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:12}}>
